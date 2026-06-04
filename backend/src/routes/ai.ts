@@ -88,4 +88,25 @@ router.post('/chat', authenticate, async (req: any, res) => {
     }
   });
 
+router.post('/run', authenticate, async (req: any, res) => {
+    try {
+      const { code, language } = req.body;
+      if (!process.env.GEMINI_API_KEY) {
+        return res.status(500).json({ error: 'AI not configured' });
+      }
+  
+      const prompt = `You are a compiler and runtime simulator for ${language}. I will provide you with code. Please execute it and provide ONLY the raw console output. If the code requires input, assume reasonable positive integers or standard inputs and show the input prompt followed by the output. If there are syntax errors, output the error message exactly as a compiler would. Do not use markdown blocks for the output, just raw text. \n\nCode:\n${code}`;
+      
+      const response = await ai.models.generateContent({
+          model: 'gemini-2.5-flash',
+          contents: prompt
+      });
+  
+      res.json({ output: response.text });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to simulate execution' });
+    }
+});
+
 export default router;
