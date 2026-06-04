@@ -17,7 +17,7 @@ const CHANNELS = [
 
 export default function GlobalChatPage() {
   const { user } = useAuth();
-  const { socket } = useSocket();
+  const { socket, onlineUsers } = useSocket();
   const [activeChannel, setActiveChannel] = useState(CHANNELS[0].id);
   const [messages, setMessages] = useState<any[]>([]);
   const [messageInput, setMessageInput] = useState('');
@@ -184,12 +184,17 @@ export default function GlobalChatPage() {
                     }}
                     className="flex gap-4 group relative"
                   >
-                     <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold shrink-0 mt-1 overflow-hidden">
-                        {msg.user.avatar ? (
-                          <img src={msg.user.avatar} alt="Avatar" className="w-full h-full object-cover" />
-                        ) : (
-                          msg.user.username.charAt(0).toUpperCase()
-                        )}
+                     <div className="relative shrink-0 mt-1">
+                       <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold overflow-hidden">
+                          {msg.user.avatar ? (
+                            <img src={msg.user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                          ) : (
+                            msg.user.username.charAt(0).toUpperCase()
+                          )}
+                       </div>
+                       {(onlineUsers?.includes(msg.user._id) || onlineUsers?.includes(msg.user.id)) && (
+                         <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-[#0d1117] rounded-full z-10" />
+                       )}
                      </div>
                      <div className="flex-1">
                        <div className="flex items-baseline gap-2 mb-1">

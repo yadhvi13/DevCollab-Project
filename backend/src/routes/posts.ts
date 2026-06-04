@@ -55,4 +55,29 @@ router.post('/:id/like', authenticate, async (req: any, res) => {
   }
 });
 
+// Comment on a post
+router.post('/:id/comment', authenticate, async (req: any, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ error: 'Post not found' });
+
+    const newComment = {
+      user: req.user.userId,
+      content: req.body.content,
+      createdAt: new Date()
+    };
+    
+    post.comments.push(newComment as any);
+    await post.save();
+    
+    const populatedPost = await Post.findById(post._id)
+      .populate('user', 'username avatar level xp')
+      .populate('comments.user', 'username avatar');
+      
+    res.json(populatedPost);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add comment' });
+  }
+});
+
 export default router;

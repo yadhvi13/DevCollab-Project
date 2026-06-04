@@ -32,8 +32,15 @@ app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 
 // Socket.io for Real-time Collaboration
+const onlineUsers = new Map<string, string>(); // socketId -> userId
+
 io.on('connection', (socket) => {
   console.log(`User connected: ${socket.id}`);
+
+  socket.on('user-connected', (userId: string) => {
+    onlineUsers.set(socket.id, userId);
+    io.emit('online-users', Array.from(new Set(onlineUsers.values())));
+  });
 
   socket.on('join-repo', (repoId: string) => {
     socket.join(repoId);
@@ -83,6 +90,8 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log(`User disconnected: ${socket.id}`);
+    onlineUsers.delete(socket.id);
+    io.emit('online-users', Array.from(new Set(onlineUsers.values())));
   });
 });
 

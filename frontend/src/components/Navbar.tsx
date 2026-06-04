@@ -1,22 +1,31 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { FolderGit2, Search, Bell, Plus, ChevronDown } from 'lucide-react';
+import { FolderGit2, Search, Bell, Plus, ChevronDown, Menu, X } from 'lucide-react';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [showPlusMenu, setShowPlusMenu] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
-    <header className="bg-[#161b22] border-b border-[#30363d] px-4 py-3 flex items-center justify-between z-10 sticky top-0 shrink-0">
+    <header className="bg-[#161b22] border-b border-[#30363d] px-4 py-3 flex items-center justify-between z-50 sticky top-0 shrink-0">
       <div className="flex items-center gap-4 flex-1">
+        {/* Mobile Menu Button */}
+        <button 
+          className="md:hidden text-[#8b949e] hover:text-white active:scale-95 transition-all"
+          onClick={() => setShowMobileMenu(!showMobileMenu)}
+        >
+          {showMobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
           <div className="bg-white p-1 rounded-md">
             <FolderGit2 className="w-6 h-6 text-black" />
           </div>
-          <span className="font-bold text-lg text-white tracking-tight">DEVCOLLAB</span>
+          <span className="font-bold text-lg text-white tracking-tight hidden sm:block">DEVCOLLAB</span>
         </div>
         
         <div className="relative w-64 ml-4 hidden md:block">
@@ -64,13 +73,19 @@ export default function Navbar() {
         </div>
         
         <div className="relative group" onMouseEnter={() => setShowProfileMenu(true)} onMouseLeave={() => setShowProfileMenu(false)}>
-          <button 
-            onClick={() => setShowProfileMenu(!showProfileMenu)} 
-            className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold border border-[#30363d] hover:border-zinc-400 transition-all cursor-pointer shadow-[0_0_10px_rgba(99,102,241,0.5)]"
-            title="Profile"
-          >
-            {user?.username?.charAt(0).toUpperCase()}
-          </button>
+          <div className="relative shrink-0 cursor-pointer" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+            <button 
+              className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold border border-[#30363d] hover:border-zinc-400 transition-all shadow-[0_0_10px_rgba(99,102,241,0.5)]"
+              title="Profile"
+            >
+              {user?.avatar ? (
+                <img src={user.avatar} alt="Profile" className="w-full h-full object-cover rounded-full" />
+              ) : (
+                user?.username?.charAt(0).toUpperCase()
+              )}
+            </button>
+            <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 border-2 border-[#161b22] rounded-full z-10" />
+          </div>
           
           {/* Dropdown on hover/click */}
           <div className={`absolute right-0 mt-2 w-48 bg-[#161b22] border border-[#30363d] rounded-md shadow-xl transition-all z-50 ${showProfileMenu ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
@@ -89,6 +104,31 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {showMobileMenu && (
+        <div className="absolute top-full left-0 right-0 bg-[#161b22] border-b border-[#30363d] shadow-xl md:hidden z-50">
+          <nav className="flex flex-col text-sm font-semibold p-2">
+            <button 
+              onClick={() => { setShowMobileMenu(false); navigate('/feed'); }} 
+              className="w-full text-left px-4 py-3 text-[#c9d1d9] hover:text-white hover:bg-[#0d1117] active:bg-indigo-600/20 active:text-white rounded-md transition-colors"
+            >
+              Social Feed
+            </button>
+            <button 
+              onClick={() => { setShowMobileMenu(false); navigate('/chat'); }} 
+              className="w-full text-left px-4 py-3 text-[#c9d1d9] hover:text-white hover:bg-[#0d1117] active:bg-indigo-600/20 active:text-white rounded-md transition-colors"
+            >
+              Global Chat
+            </button>
+            <button 
+              className="w-full text-left px-4 py-3 text-[#c9d1d9] hover:text-white hover:bg-[#0d1117] active:bg-indigo-600/20 active:text-white rounded-md transition-colors"
+            >
+              Marketplace
+            </button>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
