@@ -85,7 +85,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center overflow-hidden bg-[#09090b]">
+    <div className="min-h-screen relative flex items-center justify-center overflow-y-auto bg-[#09090b] py-8 sm:py-12">
       {/* Animated Particles Background */}
       <ParticlesProvider init={particlesInit}>
         <Particles
@@ -128,7 +128,7 @@ export default function AuthPage() {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="w-full max-w-[420px] z-10 p-4"
       >
-        <div className="relative bg-zinc-950/60 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-2xl overflow-hidden group">
+        <div className="relative bg-zinc-950/60 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden group">
           {/* Subtle animated border glow - Continuous breathing pulse so it looks alive on mobile */}
           <motion.div 
             animate={{ opacity: [0.3, 0.7, 0.3] }}
@@ -136,7 +136,7 @@ export default function AuthPage() {
             className="absolute -inset-0.5 bg-gradient-to-br from-indigo-500/40 to-emerald-500/40 rounded-3xl -z-10 blur-xl sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500" 
           />
           
-          <div className="flex justify-center mb-8 relative">
+          <div className="flex justify-center mb-6 sm:mb-8 relative">
              <motion.div 
                 animate={{ y: [0, -8, 0] }}
                 transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
@@ -150,7 +150,7 @@ export default function AuthPage() {
              </motion.div>
           </div>
 
-          <div className="text-center mb-8">
+          <div className="text-center mb-6 sm:mb-8">
             <h2 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400 mb-2 tracking-tight">
               {isForgotPassword 
                 ? 'Reset password' 
@@ -190,7 +190,7 @@ export default function AuthPage() {
             )}
           </AnimatePresence>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
             <AnimatePresence mode="popLayout">
               {!isLogin && !isForgotPassword && (
                 <motion.div
@@ -250,7 +250,7 @@ export default function AuthPage() {
                     setError('');
                     setMessage('');
                   }}
-                  className="text-zinc-500 hover:text-indigo-400 transition-colors text-xs font-semibold cursor-pointer"
+                  className="text-zinc-400 hover:text-indigo-400 focus:text-indigo-400 transition-colors text-sm font-semibold cursor-pointer focus:outline-none"
                 >
                   Forgot Password?
                 </button>
@@ -272,7 +272,7 @@ export default function AuthPage() {
             </button>
           </form>
 
-          <div className="mt-8 text-center">
+          <div className="mt-6 sm:mt-8 text-center">
             {isForgotPassword ? (
               <button 
                 onClick={() => {
