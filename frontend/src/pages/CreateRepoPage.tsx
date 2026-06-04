@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { FolderGit2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { API_BASE_URL } from '../config';
 
 export default function CreateRepoPage() {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ export default function CreateRepoPage() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/repos', {
+      const res = await fetch(`${API_BASE_URL}/api/repos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

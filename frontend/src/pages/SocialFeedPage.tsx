@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
 import Navbar from '../components/Navbar';
 import { MessageSquare, Heart, Share2, Award, Zap, Code, Send } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 export default function SocialFeedPage() {
   const { user, token } = useAuth();
@@ -19,7 +20,7 @@ export default function SocialFeedPage() {
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/posts', {
+      const res = await fetch(`${API_BASE_URL}/api/posts`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -36,7 +37,7 @@ export default function SocialFeedPage() {
     if (!newPost.trim()) return;
     
     try {
-      const res = await fetch('http://localhost:5000/api/posts', {
+      const res = await fetch(`${API_BASE_URL}/api/posts`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -55,7 +56,7 @@ export default function SocialFeedPage() {
 
   const handleLike = async (postId: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${postId}/like`, {
+      const res = await fetch(`${API_BASE_URL}/api/posts/${postId}/like`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -71,7 +72,7 @@ export default function SocialFeedPage() {
     e.preventDefault();
     if (!commentText.trim()) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/${postId}/comment`, {
+      const res = await fetch(`${API_BASE_URL}/api/posts/${postId}/comment`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

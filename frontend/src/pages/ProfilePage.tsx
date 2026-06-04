@@ -4,6 +4,7 @@ import { Award, Star, Flame, Code, BookOpen, Layers, Briefcase, ExternalLink, Ma
 import Navbar from '../components/Navbar';
 import ContributionGraph from '../components/profile/ContributionGraph';
 import ActivityTimeline from '../components/profile/ActivityTimeline';
+import { API_BASE_URL } from '../config';
 
 export default function ProfilePage() {
   const { user, token } = useAuth();
@@ -34,7 +35,7 @@ export default function ProfilePage() {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/users/me`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -56,7 +57,7 @@ export default function ProfilePage() {
 
   const fetchActivities = async (year: number) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${profile.username}/activities?year=${year}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${profile.username}/activities?year=${year}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -71,7 +72,7 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/users/profile`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/profile`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',

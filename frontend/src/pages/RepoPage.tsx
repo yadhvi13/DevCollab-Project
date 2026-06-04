@@ -9,6 +9,7 @@ import KanbanBoard from '../components/KanbanBoard';
 import Navbar from '../components/Navbar';
 import FileTree from '../components/FileTree';
 import AIChatbot from '../components/AIChatbot';
+import { API_BASE_URL } from '../config';
 
 export default function RepoPage() {
   const { id } = useParams();
@@ -17,7 +18,7 @@ export default function RepoPage() {
   const navigate = useNavigate();
 
   const [repo, setRepo] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'code' | 'issues' | 'projects' | 'insights' | 'settings' | 'discussions'>('code');
+  const [activeTab, setActiveTab] = useState<'code' | 'issues' | 'pull_requests' | 'projects' | 'insights' | 'settings' | 'discussions'>('code');
   const [activeFile, setActiveFile] = useState<any>(null);
   const [fileContent, setFileContent] = useState('');
   const [showNewFileInput, setShowNewFileInput] = useState(false);
@@ -65,7 +66,7 @@ export default function RepoPage() {
 
   const fetchRepo = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/repos/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/repos/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -94,7 +95,7 @@ export default function RepoPage() {
     if (!activeFile) return;
     setPushStatus('saving');
     try {
-      const res = await fetch(`http://localhost:5000/api/repos/${id}/files`, {
+      const res = await fetch(`${API_BASE_URL}/api/repos/${id}/files`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -118,7 +119,7 @@ export default function RepoPage() {
     if (!newFileName.trim()) return;
     
     try {
-      const res = await fetch(`http://localhost:5000/api/repos/${id}/files`, {
+      const res = await fetch(`${API_BASE_URL}/api/repos/${id}/files`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -142,7 +143,7 @@ export default function RepoPage() {
     e.stopPropagation();
     if (!confirm(`Are you sure you want to delete ${path}?`)) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/repos/${id}/files`, {
+      const res = await fetch(`${API_BASE_URL}/api/repos/${id}/files`, {
         method: 'DELETE',
         headers: { 
           'Content-Type': 'application/json',
@@ -166,7 +167,7 @@ export default function RepoPage() {
     if (deleteConfirmText !== repo.name) return;
     setIsDeletingRepo(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/repos/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/repos/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -189,7 +190,7 @@ export default function RepoPage() {
     if (isStarring) return;
     setIsStarring(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/repos/${id}/star`, {
+      const res = await fetch(`${API_BASE_URL}/api/repos/${id}/star`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -207,7 +208,7 @@ export default function RepoPage() {
     if (isForking) return;
     setIsForking(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/repos/${id}/fork`, {
+      const res = await fetch(`${API_BASE_URL}/api/repos/${id}/fork`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -228,7 +229,7 @@ export default function RepoPage() {
   const handlePostDiscussion = async () => {
     if (!discussionComment.trim()) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/repos/${id}/discussions`, {
+      const res = await fetch(`${API_BASE_URL}/api/repos/${id}/discussions`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -252,7 +253,7 @@ export default function RepoPage() {
     
     try {
       const ext = activeFile.path.split('.').pop();
-      const res = await fetch(`http://localhost:5000/api/ai/run`, {
+      const res = await fetch(`${API_BASE_URL}/api/ai/run`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -276,7 +277,7 @@ export default function RepoPage() {
     
     try {
       const ext = activeFile.path.split('.').pop();
-      const res = await fetch(`http://localhost:5000/api/ai/${action}`, {
+      const res = await fetch(`${API_BASE_URL}/api/ai/${action}`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -304,7 +305,7 @@ export default function RepoPage() {
     setIsAiLoading(true);
 
     try {
-      const res = await fetch(`http://localhost:5000/api/ai/chat`, {
+      const res = await fetch(`${API_BASE_URL}/api/ai/chat`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -685,6 +686,13 @@ export default function RepoPage() {
         {activeTab === 'issues' && (
           <div className="flex-1 p-6 flex items-center justify-center text-[#8b949e]">
              Issues coming soon. Use Projects for now!
+          </div>
+        )}
+
+        {/* PULL REQUESTS TAB */}
+        {activeTab === 'pull_requests' && (
+          <div className="flex-1 p-6 flex items-center justify-center text-[#8b949e]">
+             Pull requests coming soon. Use Discussions for now!
           </div>
         )}
 

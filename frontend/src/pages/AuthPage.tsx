@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { Rocket, Mail, Lock, User as UserIcon, ArrowRight, Code2, Sparkles } from 'lucide-react';
-import Particles from "react-tsparticles";
+import Particles, { ParticlesProvider } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import type { Engine } from "@tsparticles/engine";
+import { API_BASE_URL } from '../config';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -35,7 +36,7 @@ export default function AuthPage() {
     const body = isLogin ? { email, password } : { username, email, password };
 
     try {
-      const res = await fetch(`http://localhost:5000${endpoint}`, {
+      const res = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -59,35 +60,36 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen relative flex items-center justify-center overflow-hidden bg-[#09090b]">
       {/* Animated Particles Background */}
-      <Particles
-        id="tsparticles"
-        init={particlesInit}
-        options={{
-          background: { color: { value: "transparent" } },
-          fpsLimit: 60,
-          interactivity: {
-            events: {
-              onHover: { enable: true, mode: "grab" },
-              onClick: { enable: true, mode: "push" },
+      <ParticlesProvider init={particlesInit}>
+        <Particles
+          id="tsparticles"
+          options={{
+            background: { color: { value: "transparent" } },
+            fpsLimit: 60,
+            interactivity: {
+              events: {
+                onHover: { enable: true, mode: "grab" },
+                onClick: { enable: true, mode: "push" },
+              },
+              modes: {
+                grab: { distance: 150, links: { opacity: 0.3 } },
+                push: { quantity: 4 },
+              },
             },
-            modes: {
-              grab: { distance: 150, links: { opacity: 0.3 } },
-              push: { quantity: 4 },
+            particles: {
+              color: { value: ["#6366f1", "#10b981", "#8b5cf6"] },
+              links: { color: "#6366f1", distance: 150, enable: true, opacity: 0.1, width: 1 },
+              move: { enable: true, speed: 0.8, direction: "none", outModes: { default: "bounce" } },
+              number: { density: { enable: true, width: 800 }, value: 80 },
+              opacity: { value: 0.5 },
+              shape: { type: "circle" },
+              size: { value: { min: 1, max: 3 } },
             },
-          },
-          particles: {
-            color: { value: ["#6366f1", "#10b981", "#8b5cf6"] },
-            links: { color: "#6366f1", distance: 150, enable: true, opacity: 0.1, width: 1 },
-            move: { enable: true, speed: 0.8, direction: "none", outModes: { default: "bounce" } },
-            number: { density: { enable: true, width: 800 }, value: 80 },
-            opacity: { value: 0.5 },
-            shape: { type: "circle" },
-            size: { value: { min: 1, max: 3 } },
-          },
-          detectRetina: true,
-        }}
-        className="absolute inset-0 z-0 pointer-events-auto"
-      />
+            detectRetina: true,
+          }}
+          className="absolute inset-0 z-0 pointer-events-auto"
+        />
+      </ParticlesProvider>
 
       {/* Decorative Orbs */}
       <div className="absolute top-1/4 -left-32 w-96 h-96 bg-indigo-600/30 rounded-full blur-[120px] pointer-events-none" />

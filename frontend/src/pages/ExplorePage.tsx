@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { Compass, Star, GitFork, Book } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { API_BASE_URL } from '../config';
 
 export default function ExplorePage() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export default function ExplorePage() {
   const fetchRepos = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/repos?type=public', {
+      const res = await fetch(`${API_BASE_URL}/api/repos?type=public`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {

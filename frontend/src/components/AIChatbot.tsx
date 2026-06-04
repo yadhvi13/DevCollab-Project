@@ -3,6 +3,7 @@ import { Bot, X, Send, Maximize2, Minimize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import ReactMarkdown from 'react-markdown';
+import { API_BASE_URL } from '../config';
 
 interface AIChatbotProps {
   fileContext: string;
@@ -40,7 +41,7 @@ export default function AIChatbot({ fileContext }: AIChatbotProps) {
     setIsLoading(true);
 
     try {
-      const res = await fetch(`http://localhost:5000/api/ai/chat`, {
+      const res = await fetch(`${API_BASE_URL}/api/ai/chat`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

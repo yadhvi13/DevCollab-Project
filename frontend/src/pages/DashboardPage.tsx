@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import AIChatbot from '../components/AIChatbot';
 import ContributionGraph from '../components/profile/ContributionGraph';
+import { API_BASE_URL } from '../config';
 
 export default function DashboardPage() {
   const { user, token, logout } = useAuth();
@@ -33,7 +34,7 @@ export default function DashboardPage() {
 
   const fetchRepos = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/repos', {
+      const res = await fetch(`${API_BASE_URL}/api/repos`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -46,7 +47,7 @@ export default function DashboardPage() {
   const fetchActivities = async (year: number) => {
     if (!user) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${user.username}/activities?year=${year}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${user.username}/activities?year=${year}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -62,7 +63,7 @@ export default function DashboardPage() {
   const handleCreateRepo = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/api/repos', {
+      const res = await fetch(`${API_BASE_URL}/api/repos`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

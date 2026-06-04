@@ -4,6 +4,7 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSo
 import { CSS } from '@dnd-kit/utilities';
 import { useAuth } from '../contexts/AuthContext';
 import { Plus } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 interface Task {
   id: string;
@@ -37,7 +38,7 @@ export default function KanbanBoard({ repoId, initialKanban }: { repoId: string,
 
   const saveKanban = async (newTasks: Task[]) => {
     try {
-      await fetch(`http://localhost:5000/api/repos/${repoId}/kanban`, {
+      await fetch(`${API_BASE_URL}/api/repos/${repoId}/kanban`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ kanban: newTasks })
