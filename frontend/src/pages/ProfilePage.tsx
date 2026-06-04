@@ -14,7 +14,8 @@ export default function ProfilePage() {
     skills: '',
     techStack: '',
     portfolioLinks: '',
-    openToWork: false
+    openToWork: false,
+    avatar: ''
   });
 
   const [activities, setActivities] = useState<any[]>([]);
@@ -44,7 +45,8 @@ export default function ProfilePage() {
           skills: data.skills?.join(', ') || '',
           techStack: data.techStack?.join(', ') || '',
           portfolioLinks: data.portfolioLinks?.join(', ') || '',
-          openToWork: data.openToWork || false
+          openToWork: data.openToWork || false,
+          avatar: data.avatar || ''
         });
       }
     } catch (error) {
@@ -80,7 +82,8 @@ export default function ProfilePage() {
           skills: editForm.skills.split(',').map(s => s.trim()).filter(Boolean),
           techStack: editForm.techStack.split(',').map(s => s.trim()).filter(Boolean),
           portfolioLinks: editForm.portfolioLinks.split(',').map(s => s.trim()).filter(Boolean),
-          openToWork: editForm.openToWork
+          openToWork: editForm.openToWork,
+          avatar: editForm.avatar
         })
       });
       if (res.ok) {
@@ -113,9 +116,13 @@ export default function ProfilePage() {
                 <div className="relative mb-6 mt-4">
                   <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 p-1">
                      <div className="w-full h-full rounded-full bg-[#0d1117] flex items-center justify-center overflow-hidden">
-                        <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-purple-400">
-                          {profile.username.charAt(0).toUpperCase()}
-                        </span>
+                        {profile.avatar ? (
+                          <img src={profile.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-br from-indigo-400 to-purple-400">
+                            {profile.username.charAt(0).toUpperCase()}
+                          </span>
+                        )}
                      </div>
                   </div>
                   {profile.openToWork && (
@@ -132,6 +139,7 @@ export default function ProfilePage() {
 
                 {isEditing ? (
                   <div className="w-full space-y-3 text-left">
+                    <input type="text" value={editForm.avatar} onChange={e => setEditForm({...editForm, avatar: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-lg p-2 text-sm text-white focus:border-indigo-500 outline-none" placeholder="Avatar Image URL (optional)..." />
                     <textarea value={editForm.bio} onChange={e => setEditForm({...editForm, bio: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-lg p-2 text-sm text-white focus:border-indigo-500 outline-none" rows={3} placeholder="Bio..." />
                     <label className="flex items-center gap-2 text-sm">
                       <input type="checkbox" checked={editForm.openToWork} onChange={e => setEditForm({...editForm, openToWork: e.target.checked})} className="rounded bg-black border-white/10 text-indigo-500 focus:ring-indigo-500/20" />

@@ -9,16 +9,27 @@ import { exec } from 'child_process';
 
 const router = express.Router();
 
-// Get all accessible repos for the logged in user
+// Get repos (supports personal or public/explore)
 router.get('/', authenticate, async (req: any, res) => {
   try {
-    const repos = await Repository.find({
-      $or: [
-        { owner: req.user.userId },
-        { collaborators: req.user.userId },
-        { isPrivate: false }
-      ]
-    }).populate('owner', 'username avatar');
+    const { type } = req.query;
+    
+    let query: any = {};
+    
+    if (type === 'public') {
+      // Explore page: all public repos
+      query = { isPrivate: false };
+    } else {
+      // Dashboard: only repos where user is owner or collaborator
+      query = {
+        $or: [
+          { owner: req.user.userId },
+          { collaborators: req.user.userId }
+        ]
+      };
+    }
+
+    const repos = await Repository.find(query).populate('owner', 'username avatar');
     res.json(repos);
   } catch (error) {
     res.status(500).json({ error: 'Server error' });

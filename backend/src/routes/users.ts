@@ -80,11 +80,11 @@ router.get('/me', authenticate, async (req: any, res) => {
 // Update profile
 router.put('/profile', authenticate, async (req: any, res) => {
   try {
-    const { bio, skills, techStack, openToWork, portfolioLinks } = req.body;
+    const { bio, skills, techStack, openToWork, portfolioLinks, avatar } = req.body;
     
     const user = await User.findByIdAndUpdate(
       req.user.userId,
-      { bio, skills, techStack, openToWork, portfolioLinks },
+      { bio, skills, techStack, openToWork, portfolioLinks, avatar },
       { new: true }
     ).select('-password');
     

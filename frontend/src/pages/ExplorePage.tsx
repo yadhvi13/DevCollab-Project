@@ -17,7 +17,7 @@ export default function ExplorePage() {
   const fetchRepos = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/repos', {
+      const res = await fetch('http://localhost:5000/api/repos?type=public', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {

@@ -334,12 +334,45 @@ export default function RepoPage() {
       case 'js':
       case 'jsx': return 'javascript';
       case 'py': return 'python';
-      case 'cpp': return 'cpp';
+      case 'cpp':
+      case 'cc':
+      case 'cxx':
+      case 'hpp':
+      case 'h': return 'cpp';
       case 'c': return 'c';
-      case 'html': return 'html';
+      case 'html':
+      case 'htm': return 'html';
       case 'css': return 'css';
+      case 'scss':
+      case 'sass': return 'scss';
+      case 'less': return 'less';
       case 'json': return 'json';
-      case 'md': return 'markdown';
+      case 'md':
+      case 'markdown': return 'markdown';
+      case 'java': return 'java';
+      case 'go': return 'go';
+      case 'rs': return 'rust';
+      case 'php': return 'php';
+      case 'rb': return 'ruby';
+      case 'sh':
+      case 'bash': return 'shell';
+      case 'sql': return 'sql';
+      case 'xml': return 'xml';
+      case 'yaml':
+      case 'yml': return 'yaml';
+      case 'cs': return 'csharp';
+      case 'swift': return 'swift';
+      case 'kt':
+      case 'kts': return 'kotlin';
+      case 'r': return 'r';
+      case 'm': return 'objective-c';
+      case 'dart': return 'dart';
+      case 'scala': return 'scala';
+      case 'pl': return 'perl';
+      case 'lua': return 'lua';
+      case 'vue': return 'vue';
+      case 'graphql':
+      case 'gql': return 'graphql';
       default: return 'plaintext';
     }
   };

@@ -22,7 +22,7 @@ router.post('/', authenticate, async (req: any, res) => {
   try {
     const { content, type } = req.body;
     const post = new Post({
-      user: req.userId,
+      user: req.user.userId,
       content,
       type
     });
@@ -41,9 +41,9 @@ router.post('/:id/like', authenticate, async (req: any, res) => {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ error: 'Post not found' });
 
-    const index = post.likes.indexOf(req.userId);
+    const index = post.likes.indexOf(req.user.userId);
     if (index === -1) {
-      post.likes.push(req.userId);
+      post.likes.push(req.user.userId);
     } else {
       post.likes.splice(index, 1);
     }

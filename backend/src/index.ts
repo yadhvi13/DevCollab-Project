@@ -68,13 +68,17 @@ io.on('connection', (socket) => {
     console.log(`Socket ${socket.id} left global room ${roomId}`);
   });
 
-  socket.on('global-chat-message', (data: { room: string, message: string, user: any }) => {
+  socket.on('global-chat-message', (data: { room: string, message: string, user: any, replyTo?: any }) => {
     const messageData = {
       ...data,
       timestamp: new Date(),
       id: Math.random().toString(36).substring(2, 9)
     };
     io.to(`global-${data.room}`).emit('global-chat-message', messageData);
+  });
+
+  socket.on('delete-global-message', (data: { room: string, messageId: string }) => {
+    io.to(`global-${data.room}`).emit('delete-global-message', data.messageId);
   });
 
   socket.on('disconnect', () => {
