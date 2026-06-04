@@ -33,11 +33,35 @@ export default function GlobalChatPage() {
     // Clear messages when switching channel (in a real app, you'd fetch history)
     setMessages([]);
 
+    const playPopSound = () => {
+      try {
+        const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.1);
+        
+        gain.gain.setValueAtTime(0.5, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+        
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.1);
+      } catch (e) {
+        console.error('Audio play failed:', e);
+      }
+    };
+
     const handleMessage = (data: any) => {
       setMessages(prev => [...prev, data]);
       if (data.user._id !== user?._id && data.user.id !== user?._id) {
-        const audio = new Audio(POP_SOUND);
-        audio.play().catch(e => console.log('Audio play failed:', e));
+        playPopSound();
       }
     };
 

@@ -29,20 +29,20 @@ export default function Navbar() {
         </div>
 
         <nav className="hidden md:flex items-center gap-4 text-sm font-semibold ml-2">
-          <a onClick={() => navigate('/feed')} className="cursor-pointer hover:text-white transition-colors">Social Feed</a>
-          <a onClick={() => navigate('/chat')} className="cursor-pointer hover:text-white transition-colors">Global Chat</a>
-          <a href="#" className="hover:text-white transition-colors">Marketplace</a>
+          <a onClick={() => navigate('/feed')} className="cursor-pointer hover:text-white active:text-indigo-400 transition-colors">Social Feed</a>
+          <a onClick={() => navigate('/chat')} className="cursor-pointer hover:text-white active:text-indigo-400 transition-colors">Global Chat</a>
+          <a href="#" className="hover:text-white active:text-indigo-400 transition-colors">Marketplace</a>
         </nav>
       </div>
 
       <div className="flex items-center gap-3">
-        <button className="text-[#8b949e] hover:text-white transition-colors relative">
+        <button className="text-[#8b949e] hover:text-white active:scale-90 transition-all relative">
           <Bell className="w-5 h-5" />
           <span className="absolute top-0 right-0 w-2 h-2 bg-blue-500 rounded-full border-2 border-[#161b22]"></span>
         </button>
         
         <div className="relative group" onMouseEnter={() => setShowPlusMenu(true)} onMouseLeave={() => setShowPlusMenu(false)}>
-          <button onClick={() => setShowPlusMenu(!showPlusMenu)} className="text-[#8b949e] hover:text-white transition-colors flex items-center gap-1 cursor-pointer">
+          <button onClick={() => setShowPlusMenu(!showPlusMenu)} className="text-[#8b949e] hover:text-white active:text-indigo-400 transition-colors flex items-center gap-1 cursor-pointer">
             <Plus className="w-5 h-5" />
             <ChevronDown className="w-3 h-3" />
           </button>
@@ -53,12 +53,12 @@ export default function Navbar() {
               <p className="text-[10px] font-bold text-[#8b949e] tracking-wider uppercase">New Actions</p>
             </div>
             <div className="py-1 border-b border-[#30363d]">
-              <button onClick={() => { setShowPlusMenu(false); navigate('/create'); }} className="w-full text-left px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white">Create Repository</button>
-              <button onClick={() => { setShowPlusMenu(false); navigate('/import'); }} className="w-full text-left px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white">Import Repository</button>
-              <button onClick={() => { setShowPlusMenu(false); navigate('/project/new'); }} className="w-full text-left px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white">New Project</button>
+              <button onClick={() => { setShowPlusMenu(false); navigate('/create'); }} className="w-full text-left px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white active:bg-indigo-600/20 active:text-white transition-colors">Create Repository</button>
+              <button onClick={() => { setShowPlusMenu(false); navigate('/import'); }} className="w-full text-left px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white active:bg-indigo-600/20 active:text-white transition-colors">Import Repository</button>
+              <button onClick={() => { setShowPlusMenu(false); navigate('/project/new'); }} className="w-full text-left px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white active:bg-indigo-600/20 active:text-white transition-colors">New Project</button>
             </div>
             <div className="py-1">
-               <button onClick={() => { setShowPlusMenu(false); navigate('/explore'); }} className="w-full text-center px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white">Explore more repositories</button>
+               <button onClick={() => { setShowPlusMenu(false); navigate('/explore'); }} className="w-full text-center px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white active:bg-indigo-600/20 active:text-white transition-colors">Explore more repositories</button>
             </div>
           </div>
         </div>

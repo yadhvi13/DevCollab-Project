@@ -19,7 +19,11 @@ export default function AuthPage() {
   const navigate = useNavigate();
 
   const particlesInit = useCallback(async (engine: Engine) => {
-    await loadSlim(engine);
+    try {
+      await loadSlim(engine);
+    } catch (error) {
+      console.warn("Particles engine failed to load slim:", error);
+    }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

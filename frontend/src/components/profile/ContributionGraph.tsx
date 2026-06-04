@@ -125,7 +125,7 @@ export default function ContributionGraph({ activities, year, availableYears, on
                         return (
                           <div
                             key={`${rowIndex}-${colIndex}`}
-                            className={`w-[12px] h-[12px] rounded-sm ${getIntensityClass(count)} outline outline-1 outline-offset-[-1px] outline-white/5 hover:outline-white/40 transition-all cursor-pointer`}
+                            className={`w-[12px] h-[12px] rounded-sm ${getIntensityClass(count)} outline outline-1 outline-offset-[-1px] outline-white/5 hover:outline-white/40 active:outline-white/60 active:scale-110 transition-all duration-200 cursor-pointer`}
                             title={`${count} contributions on ${format(day, 'MMM d, yyyy')}`}
                           />
                         );
@@ -139,7 +139,7 @@ export default function ContributionGraph({ activities, year, availableYears, on
           </div>
 
           <div className="flex justify-between items-center mt-4">
-            <a href="#" className="text-xs text-[#8b949e] hover:text-[#58a6ff]">Learn how we count contributions</a>
+            <a href="#" className="text-xs text-[#8b949e] hover:text-[#58a6ff] active:text-indigo-400 transition-colors">Learn how we count contributions</a>
             <div className="flex items-center gap-2 text-xs text-[#8b949e]">
               <span>Less</span>
               <div className="flex gap-[3px]">
@@ -162,8 +162,8 @@ export default function ContributionGraph({ activities, year, availableYears, on
           <button
             key={y}
             onClick={() => onYearSelect(y)}
-            className={`px-4 py-2 text-sm rounded-md text-left whitespace-nowrap transition-colors ${
-              year === y ? 'bg-[#1f6feb] text-white font-semibold' : 'text-[#8b949e] hover:bg-[#161b22]'
+            className={`px-4 py-2 text-sm rounded-md text-left whitespace-nowrap transition-all duration-200 active:scale-95 ${
+              year === y ? 'bg-[#1f6feb] text-white font-semibold shadow-[0_0_10px_rgba(31,111,235,0.5)]' : 'text-[#8b949e] hover:bg-[#161b22] active:bg-[#1f6feb]/20 active:text-white'
             }`}
           >
             {y}

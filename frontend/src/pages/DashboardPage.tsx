@@ -95,7 +95,7 @@ export default function DashboardPage() {
               <h2 className="text-sm font-semibold text-white">Top Repositories</h2>
               <button 
                 onClick={() => setShowNewRepoModal(true)}
-                className="bg-[#238636] hover:bg-[#2ea043] text-white text-xs font-medium py-1 px-3 rounded-md flex items-center gap-1 transition-colors"
+                className="bg-[#238636] hover:bg-[#2ea043] active:scale-95 active:bg-[#2ea043] text-white text-xs font-medium py-1 px-3 rounded-md flex items-center gap-1 transition-all duration-200"
               >
                 <FolderGit2 className="w-3.5 h-3.5" /> New
               </button>
@@ -112,13 +112,13 @@ export default function DashboardPage() {
                 <button 
                   key={repo._id} 
                   onClick={() => navigate(`/repo/${repo._id}`)}
-                  className="w-full text-left flex items-center gap-2 group text-sm"
+                  className="w-full text-left flex items-center gap-2 group text-sm p-1.5 -mx-1.5 rounded-md hover:bg-[#21262d] active:bg-[#21262d] active:scale-[0.98] transition-all duration-200"
                 >
-                  <FolderGit2 className="w-4 h-4 text-[#8b949e] group-hover:text-white transition-colors" />
+                  <FolderGit2 className="w-4 h-4 text-[#8b949e] group-hover:text-white group-active:text-white transition-colors" />
                   <div className="flex items-center gap-1 overflow-hidden">
-                    <span className="text-[#8b949e] group-hover:text-white transition-colors truncate">{user?.username}</span>
+                    <span className="text-[#8b949e] group-hover:text-white group-active:text-white transition-colors truncate">{user?.username}</span>
                     <span className="text-[#8b949e]">/</span>
-                    <span className="font-semibold text-white group-hover:text-indigo-400 transition-colors truncate">{repo.name}</span>
+                    <span className="font-semibold text-white group-hover:text-indigo-400 group-active:text-indigo-400 transition-colors truncate">{repo.name}</span>
                   </div>
                 </button>
               ))}
@@ -193,7 +193,7 @@ export default function DashboardPage() {
           <div className="mt-4">
              <div className="flex justify-between items-center mb-4">
                 <h2 className="text-sm font-semibold text-white">Recent Activity Feed</h2>
-                <button className="text-xs text-[#58a6ff] hover:underline">View all activity</button>
+                <button className="text-xs text-[#58a6ff] hover:underline active:text-indigo-400 transition-colors">View all activity</button>
              </div>
              
              <div className="border-t border-[#30363d] pt-4 space-y-4">
@@ -229,11 +229,11 @@ export default function DashboardPage() {
             
             <div className="space-y-4">
               <div>
-                <a href="#" className="text-sm font-bold text-[#58a6ff] hover:underline block">facebook / react</a>
+                <a href="#" className="text-sm font-bold text-[#58a6ff] hover:underline active:text-indigo-400 transition-colors block">facebook / react</a>
                 <p className="text-xs text-[#8b949e] mt-1">A JavaScript library for building user interfaces</p>
               </div>
               <div className="border-t border-[#30363d] pt-4">
-                <a href="#" className="text-sm font-bold text-[#58a6ff] hover:underline block">tailwindlabs / tailwindcss</a>
+                <a href="#" className="text-sm font-bold text-[#58a6ff] hover:underline active:text-indigo-400 transition-colors block">tailwindlabs / tailwindcss</a>
                 <p className="text-xs text-[#8b949e] mt-1">A utility-first CSS framework for rapid UI development.</p>
               </div>
             </div>
@@ -245,9 +245,9 @@ export default function DashboardPage() {
 
           <div className="border border-[#30363d] bg-[#0d1117] rounded-xl p-4">
             <h2 className="text-sm font-semibold text-white mb-4">Your Teams</h2>
-            <div className="flex items-center gap-2 cursor-pointer group">
-               <div className="w-6 h-6 rounded bg-indigo-600 flex items-center justify-center text-[10px] font-bold text-white">DC</div>
-               <span className="text-sm font-medium text-white group-hover:text-indigo-400 transition-colors">DevCollab Core</span>
+            <div className="flex items-center gap-2 cursor-pointer group active:scale-[0.98] transition-all duration-200">
+               <div className="w-6 h-6 rounded bg-indigo-600 flex items-center justify-center text-[10px] font-bold text-white shadow-[0_0_10px_rgba(99,102,241,0.5)] group-hover:shadow-[0_0_15px_rgba(99,102,241,0.8)] group-active:shadow-[0_0_15px_rgba(99,102,241,0.8)] transition-all">DC</div>
+               <span className="text-sm font-medium text-white group-hover:text-indigo-400 group-active:text-indigo-400 transition-colors">DevCollab Core</span>
             </div>
           </div>
         </aside>
