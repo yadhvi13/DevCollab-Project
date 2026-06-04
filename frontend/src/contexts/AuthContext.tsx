@@ -26,6 +26,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     if (token) {
+      if (user) {
+        setLoading(false);
+        return;
+      }
       // Fetch user profile
       fetch(`${API_BASE_URL}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -43,7 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } else {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, user]);
 
   const login = (newToken: string, newUser: User) => {
     localStorage.setItem('token', newToken);

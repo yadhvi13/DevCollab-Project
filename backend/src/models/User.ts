@@ -18,6 +18,8 @@ export interface IUser extends Document {
   techStack: string[];
   openToWork: boolean;
   portfolioLinks: string[];
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
 }
 
 const UserSchema: Schema = new Schema({
@@ -36,6 +38,9 @@ const UserSchema: Schema = new Schema({
   techStack: [{ type: String }],
   openToWork: { type: Boolean, default: false },
   portfolioLinks: [{ type: String }],
+  
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
 }, {
   timestamps: true,
 });
