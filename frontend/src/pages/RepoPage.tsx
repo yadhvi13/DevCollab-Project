@@ -2,10 +2,13 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
-import { FolderGit2, Search, Bell, Plus, ChevronDown, Star, GitFork, Eye, Play, History, Code, MessageSquare, Layout, Activity, Shield, Book, CircleDot, GitPullRequest, Settings, Terminal, Bot, X, FileText, Send } from 'lucide-react';
+import { FolderGit2, Search, Bell, Plus, ChevronDown, Star, GitFork, Eye, Play, History, Code, MessageSquare, Layout, Activity, Shield, Book, CircleDot, GitPullRequest, Settings, Terminal, Bot, X, FileText, Send, Trash2, Copy, Check, GitCommit, Users, FileCode2 } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 import ReactMarkdown from 'react-markdown';
 import KanbanBoard from '../components/KanbanBoard';
+import Navbar from '../components/Navbar';
+import FileTree from '../components/FileTree';
+import AIChatbot from '../components/AIChatbot';
 
 export default function RepoPage() {
   const { id } = useParams();
@@ -14,7 +17,7 @@ export default function RepoPage() {
   const navigate = useNavigate();
 
   const [repo, setRepo] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'code' | 'issues' | 'projects'>('code');
+  const [activeTab, setActiveTab] = useState<'code' | 'issues' | 'projects' | 'insights' | 'settings' | 'discussions'>('code');
   const [activeFile, setActiveFile] = useState<any>(null);
   const [fileContent, setFileContent] = useState('');
   const [showNewFileInput, setShowNewFileInput] = useState(false);
@@ -25,6 +28,14 @@ export default function RepoPage() {
   const [pushStatus, setPushStatus] = useState<'idle'|'saving'|'saved'>('idle');
   const [chatHistory, setChatHistory] = useState<any[]>([]);
   const [aiChatInput, setAiChatInput] = useState('');
+  const [showCloneDropdown, setShowCloneDropdown] = useState(false);
+  const [copiedClone, setCopiedClone] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [isDeletingRepo, setIsDeletingRepo] = useState(false);
+  const [discussionComment, setDiscussionComment] = useState('');
+  const [isStarring, setIsStarring] = useState(false);
+  const [isForking, setIsForking] = useState(false);
+  const isStarred = repo?.stars?.includes(user?._id);
   
   // Bottom Panel State
   const [bottomPanelTab, setBottomPanelTab] = useState<'terminal' | 'gemini'>('terminal');
@@ -121,6 +132,113 @@ export default function RepoPage() {
         fetchRepo();
         setActiveFile({ path: newFileName, content: '' });
         setFileContent('');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDeleteFile = async (e: React.MouseEvent, path: string) => {
+    e.stopPropagation();
+    if (!confirm(`Are you sure you want to delete ${path}?`)) return;
+    try {
+      const res = await fetch(`http://localhost:5000/api/repos/${id}/files`, {
+        method: 'DELETE',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ path })
+      });
+      if (res.ok) {
+        if (activeFile?.path === path) {
+           setActiveFile(null);
+           setFileContent('');
+        }
+        fetchRepo();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDeleteRepo = async () => {
+    if (deleteConfirmText !== repo.name) return;
+    setIsDeletingRepo(true);
+    try {
+      const res = await fetch(`http://localhost:5000/api/repos/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        navigate('/');
+      }
+    } catch (error) {
+      console.error(error);
+      setIsDeletingRepo(false);
+    }
+  };
+
+  const handleCopyClone = () => {
+    navigator.clipboard.writeText(`https://devcollab.io/${repo.owner?.username}/${repo.name}.git`);
+    setCopiedClone(true);
+    setTimeout(() => setCopiedClone(false), 2000);
+  };
+
+  const handleStar = async () => {
+    if (isStarring) return;
+    setIsStarring(true);
+    try {
+      const res = await fetch(`http://localhost:5000/api/repos/${id}/star`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        fetchRepo();
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsStarring(false);
+    }
+  };
+
+  const handleFork = async () => {
+    if (isForking) return;
+    setIsForking(true);
+    try {
+      const res = await fetch(`http://localhost:5000/api/repos/${id}/fork`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const forkedRepo = await res.json();
+        navigate(`/repo/${forkedRepo._id}`);
+      } else {
+        const data = await res.json();
+        alert(data.error);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsForking(false);
+    }
+  };
+
+  const handlePostDiscussion = async () => {
+    if (!discussionComment.trim()) return;
+    try {
+      const res = await fetch(`http://localhost:5000/api/repos/${id}/discussions`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ content: discussionComment })
+      });
+      if (res.ok) {
+        setDiscussionComment('');
+        fetchRepo();
       }
     } catch (error) {
       console.error(error);
@@ -231,45 +349,7 @@ export default function RepoPage() {
   return (
     <div className={`h-screen bg-[#0d1117] text-[#c9d1d9] flex flex-col font-sans overflow-hidden transition-all duration-300 ${isIntentMode ? 'ring-2 ring-inset ring-indigo-500' : ''}`}>
       
-      {/* Global Header */}
-      <header className="bg-[#161b22] border-b border-[#30363d] px-4 py-3 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-4 flex-1">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="bg-white p-1 rounded-md">
-              <FolderGit2 className="w-6 h-6 text-black" />
-            </div>
-            <span className="font-bold text-lg text-white tracking-tight">DEVCOLLAB</span>
-          </div>
-          
-          <div className="relative w-64 ml-4 hidden md:block">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8b949e]" />
-            <input 
-              type="text" 
-              placeholder="Quick search... (cmd + k)"
-              className="w-full bg-[#0d1117] border border-[#30363d] rounded-md py-1.5 pl-9 pr-3 text-sm text-[#c9d1d9] focus:outline-none focus:border-[#58a6ff] focus:ring-1 focus:ring-[#58a6ff] transition-all"
-            />
-          </div>
-
-          <nav className="hidden md:flex items-center gap-4 text-sm font-semibold ml-2">
-            <a href="#" className="hover:text-white transition-colors">Pull requests</a>
-            <a href="#" className="hover:text-white transition-colors">Issues</a>
-            <a href="#" className="hover:text-white transition-colors">Marketplace</a>
-          </nav>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button className="text-[#8b949e] hover:text-white transition-colors relative">
-            <Bell className="w-5 h-5" />
-          </button>
-          <button className="text-[#8b949e] hover:text-white transition-colors flex items-center gap-1">
-            <Plus className="w-5 h-5" />
-            <ChevronDown className="w-3 h-3" />
-          </button>
-          <button className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold border border-[#30363d] hover:border-zinc-400 cursor-pointer" onClick={logout}>
-            {user?.username.charAt(0).toUpperCase()}
-          </button>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Repo Header & Tabs */}
       <div className="bg-[#0d1117] border-b border-[#30363d] pt-4 px-6 shrink-0 flex flex-col gap-4">
@@ -324,10 +404,10 @@ export default function RepoPage() {
           <button onClick={() => setActiveTab('issues')} className={`flex items-center gap-2 pb-2 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${activeTab === 'issues' ? 'border-[#f78166] text-white' : 'border-transparent text-[#8b949e] hover:text-[#c9d1d9] hover:border-[#30363d]'}`}>
             <CircleDot className="w-4 h-4" /> Issues
           </button>
-          <button className="flex items-center gap-2 pb-2 border-b-2 border-transparent font-medium text-sm text-[#8b949e] hover:text-[#c9d1d9] hover:border-[#30363d] transition-colors whitespace-nowrap">
+          <button onClick={() => setActiveTab('pull_requests')} className={`flex items-center gap-2 pb-2 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${activeTab === 'pull_requests' ? 'border-[#f78166] text-white' : 'border-transparent text-[#8b949e] hover:text-[#c9d1d9] hover:border-[#30363d]'}`}>
             <GitPullRequest className="w-4 h-4" /> Pull requests
           </button>
-          <button className="flex items-center gap-2 pb-2 border-b-2 border-transparent font-medium text-sm text-[#8b949e] hover:text-[#c9d1d9] hover:border-[#30363d] transition-colors whitespace-nowrap">
+          <button onClick={() => setActiveTab('discussions')} className={`flex items-center gap-2 pb-2 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${activeTab === 'discussions' ? 'border-[#f78166] text-white' : 'border-transparent text-[#8b949e] hover:text-[#c9d1d9] hover:border-[#30363d]'}`}>
             <MessageSquare className="w-4 h-4" /> Discussions
           </button>
           <button className="flex items-center gap-2 pb-2 border-b-2 border-transparent font-medium text-sm text-[#8b949e] hover:text-[#c9d1d9] hover:border-[#30363d] transition-colors whitespace-nowrap">
@@ -342,10 +422,10 @@ export default function RepoPage() {
           <button className="flex items-center gap-2 pb-2 border-b-2 border-transparent font-medium text-sm text-[#8b949e] hover:text-[#c9d1d9] hover:border-[#30363d] transition-colors whitespace-nowrap">
             <Shield className="w-4 h-4" /> Security
           </button>
-          <button className="flex items-center gap-2 pb-2 border-b-2 border-transparent font-medium text-sm text-[#8b949e] hover:text-[#c9d1d9] hover:border-[#30363d] transition-colors whitespace-nowrap">
+          <button onClick={() => setActiveTab('insights')} className={`flex items-center gap-2 pb-2 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${activeTab === 'insights' ? 'border-[#f78166] text-white' : 'border-transparent text-[#8b949e] hover:text-[#c9d1d9] hover:border-[#30363d]'}`}>
             <Activity className="w-4 h-4" /> Insights
           </button>
-          <button className="flex items-center gap-2 pb-2 border-b-2 border-transparent font-medium text-sm text-[#8b949e] hover:text-[#c9d1d9] hover:border-[#30363d] transition-colors whitespace-nowrap">
+          <button onClick={() => setActiveTab('settings')} className={`flex items-center gap-2 pb-2 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${activeTab === 'settings' ? 'border-[#f78166] text-white' : 'border-transparent text-[#8b949e] hover:text-[#c9d1d9] hover:border-[#30363d]'}`}>
             <Settings className="w-4 h-4" /> Settings
           </button>
         </div>
@@ -382,18 +462,13 @@ export default function RepoPage() {
                     />
                   </form>
                 )}
-                
                 <div className="space-y-0.5">
-                  {repo.files?.map((file: any) => (
-                    <button 
-                      key={file.path}
-                      onClick={() => handleFileSelect(file)}
-                      className={`w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-md transition-colors ${activeFile?.path === file.path ? 'bg-[#238636]/10 text-[#58a6ff]' : 'text-[#8b949e] hover:bg-[#21262d] hover:text-white'}`}
-                    >
-                      <FileText className="w-4 h-4 opacity-70" />
-                      <span className="truncate">{file.path}</span>
-                    </button>
-                  ))}
+                  <FileTree 
+                    files={repo.files || []} 
+                    activeFile={activeFile} 
+                    onSelectFile={handleFileSelect} 
+                    onDeleteFile={handleDeleteFile} 
+                  />
                 </div>
               </div>
             </div>
@@ -418,9 +493,25 @@ export default function RepoPage() {
                       <button className="text-[#8b949e] hover:text-white p-1.5 rounded hover:bg-[#21262d] transition-colors" title="History">
                         <History className="w-4 h-4" />
                       </button>
-                      <button className="bg-[#21262d] text-[#c9d1d9] text-xs font-medium px-3 py-1.5 rounded-md border border-[#30363d] flex items-center gap-1.5 hover:bg-[#30363d]">
-                        <Code className="w-4 h-4" /> CODE <ChevronDown className="w-3 h-3" />
-                      </button>
+                      <div className="relative">
+                        <button onClick={() => setShowCloneDropdown(!showCloneDropdown)} className="bg-[#21262d] text-[#c9d1d9] text-xs font-medium px-3 py-1.5 rounded-md border border-[#30363d] flex items-center gap-1.5 hover:bg-[#30363d]">
+                          <Code className="w-4 h-4" /> CODE <ChevronDown className="w-3 h-3" />
+                        </button>
+                        {showCloneDropdown && (
+                          <div className="absolute top-full right-0 mt-2 w-80 bg-[#161b22] border border-[#30363d] rounded-xl shadow-2xl z-50 p-4">
+                             <div className="flex justify-between items-center mb-3">
+                                <span className="text-sm font-semibold text-white flex items-center gap-2"><Terminal className="w-4 h-4" /> Clone Repository</span>
+                                <button onClick={() => setShowCloneDropdown(false)} className="text-[#8b949e] hover:text-white"><X className="w-4 h-4" /></button>
+                             </div>
+                             <div className="flex gap-2">
+                                <input type="text" readOnly value={`https://devcollab.io/${repo?.owner?.username}/${repo?.name}.git`} className="flex-1 bg-[#0d1117] border border-[#30363d] rounded text-xs px-3 py-2 text-[#8b949e] focus:outline-none" />
+                                <button onClick={handleCopyClone} className="bg-[#21262d] border border-[#30363d] hover:bg-[#30363d] rounded px-3 py-2 text-[#c9d1d9] transition-colors">
+                                   {copiedClone ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                                </button>
+                             </div>
+                          </div>
+                        )}
+                      </div>
                       <button 
                         onClick={() => handleSaveFile()} 
                         disabled={pushStatus !== 'idle'}
@@ -564,12 +655,201 @@ export default function RepoPage() {
           </div>
         )}
 
+        {/* DISCUSSIONS TAB */}
+        {activeTab === 'discussions' && (
+          <div className="flex-1 flex flex-col p-6">
+             <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-2 border-b border-[#30363d] pb-4">
+               <GitPullRequest className="w-5 h-5 text-emerald-400" /> Pull Request Discussions
+             </h2>
+
+             <div className="flex-1 flex flex-col justify-center items-center text-center">
+               {repo.discussions?.length > 0 ? (
+                 <div className="w-full max-w-4xl space-y-4 mb-6">
+                   {repo.discussions.map((disc: any, i: number) => (
+                     <div key={i} className="flex gap-4 items-start text-left bg-[#0d1117] border border-[#30363d] p-4 rounded-xl">
+                       <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold shrink-0">
+                         {disc.author.charAt(0).toUpperCase()}
+                       </div>
+                       <div>
+                         <div className="flex items-center gap-2 mb-1">
+                           <span className="font-bold text-white text-sm">{disc.author}</span>
+                           <span className="text-xs text-[#8b949e]">{new Date(disc.timestamp).toLocaleString()}</span>
+                         </div>
+                         <p className="text-[#c9d1d9] text-sm whitespace-pre-wrap">{disc.content}</p>
+                       </div>
+                     </div>
+                   ))}
+                 </div>
+               ) : (
+                 <div className="flex-1 flex flex-col items-center justify-center mb-8">
+                   <MessageSquare className="w-12 h-12 text-[#30363d] mb-4" />
+                   <h3 className="text-[#8b949e] text-lg font-medium">No discussions yet. Start the conversation!</h3>
+                 </div>
+               )}
+             </div>
+
+             <div className="bg-[#161b22] border border-[#30363d] rounded-xl overflow-hidden mt-auto">
+                <div className="bg-[#0d1117] border-b border-[#30363d] flex">
+                  <button className="px-4 py-2 text-sm font-semibold text-white border-b-2 border-[#f78166]">Write</button>
+                  <button className="px-4 py-2 text-sm font-medium text-[#8b949e] hover:text-white transition-colors">Preview</button>
+                </div>
+                <textarea 
+                  value={discussionComment}
+                  onChange={e => setDiscussionComment(e.target.value)}
+                  placeholder="Leave a comment"
+                  className="w-full bg-[#0d1117] text-sm text-[#c9d1d9] p-4 min-h-[120px] focus:outline-none resize-y"
+                />
+                <div className="bg-[#161b22] border-t border-[#30363d] p-3 flex justify-end">
+                  <button 
+                    onClick={handlePostDiscussion}
+                    disabled={!discussionComment.trim()}
+                    className="bg-[#238636] hover:bg-[#2ea043] disabled:bg-[#238636]/50 disabled:text-white/50 text-white font-semibold py-1.5 px-4 rounded-md transition-colors text-sm flex items-center gap-2"
+                  >
+                    Comment <MessageSquare className="w-4 h-4" />
+                  </button>
+                </div>
+             </div>
+          </div>
+        )}
+
+        {/* INSIGHTS TAB */}
+        {activeTab === 'insights' && (
+          <div className="flex-1 p-8 overflow-y-auto">
+             <div className="max-w-6xl mx-auto">
+                
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h2 className="text-3xl font-bold text-white mb-2">Repository Insights</h2>
+                    <p className="text-[#8b949e]">Track activity, contributions, and project health.</p>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="bg-[#0d1117] border border-[#30363d] rounded-lg px-6 py-3 text-center">
+                      <div className="text-[10px] font-bold text-[#8b949e] uppercase tracking-wider mb-1">Commits</div>
+                      <div className="text-2xl font-bold text-[#58a6ff]">{repo.commits?.length || 0}</div>
+                    </div>
+                    <div className="bg-[#0d1117] border border-[#30363d] rounded-lg px-6 py-3 text-center">
+                      <div className="text-[10px] font-bold text-[#8b949e] uppercase tracking-wider mb-1">Contributors</div>
+                      <div className="text-2xl font-bold text-emerald-400">{1 + (repo.collaborators?.length || 0)}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                   <div className="border border-[#30363d] bg-[#0d1117] rounded-xl p-6 relative overflow-hidden">
+                      <div className="text-sm font-semibold text-[#8b949e] mb-4">Pull Requests</div>
+                      <div className="flex items-end gap-3">
+                         <span className="text-4xl font-bold text-[#d2a8ff]">0</span>
+                         <span className="text-xs font-semibold text-[#8b949e] uppercase tracking-wider mb-1">HEALTHY</span>
+                      </div>
+                      <div className="absolute right-6 bottom-6 flex gap-1 items-end h-8">
+                         <div className="w-1.5 h-3 bg-[#30363d] rounded-full"></div>
+                         <div className="w-1.5 h-6 bg-[#30363d] rounded-full"></div>
+                         <div className="w-1.5 h-4 bg-[#30363d] rounded-full"></div>
+                      </div>
+                   </div>
+                   <div className="border border-[#30363d] bg-[#0d1117] rounded-xl p-6 relative overflow-hidden">
+                      <div className="text-sm font-semibold text-[#8b949e] mb-4">Open Issues</div>
+                      <div className="flex items-end gap-3">
+                         <span className="text-4xl font-bold text-[#ffa657]">0</span>
+                         <span className="text-xs font-semibold text-[#8b949e] uppercase tracking-wider mb-1">ACTIVE</span>
+                      </div>
+                      <div className="absolute right-6 bottom-6 flex gap-1 items-end h-8">
+                         <div className="w-1.5 h-5 bg-[#30363d] rounded-full"></div>
+                         <div className="w-1.5 h-2 bg-[#30363d] rounded-full"></div>
+                         <div className="w-1.5 h-7 bg-[#30363d] rounded-full"></div>
+                      </div>
+                   </div>
+                   <div className="border border-[#30363d] bg-[#0d1117] rounded-xl p-6 relative overflow-hidden">
+                      <div className="text-sm font-semibold text-[#8b949e] mb-4">Stars</div>
+                      <div className="flex items-end gap-3">
+                         <span className="text-4xl font-bold text-[#e3b341]">{repo.stars?.length || 0}</span>
+                         <span className="text-xs font-semibold text-[#8b949e] uppercase tracking-wider mb-1">GROWING</span>
+                      </div>
+                      <div className="absolute right-6 bottom-6 flex gap-1 items-end h-8">
+                         <div className="w-1.5 h-4 bg-[#30363d] rounded-full"></div>
+                         <div className="w-1.5 h-5 bg-[#30363d] rounded-full"></div>
+                         <div className="w-1.5 h-8 bg-[#30363d] rounded-full"></div>
+                      </div>
+                   </div>
+                </div>
+
+                <div>
+                   <h3 className="text-xs font-bold text-[#8b949e] uppercase tracking-wider mb-4">Recent Activity</h3>
+                   <div className="space-y-3">
+                     {repo.commits?.slice().reverse().map((commit: any) => {
+                       const filename = commit.message.split(' ')[1] || 'commit';
+                       return (
+                         <div key={commit.sha} className="bg-[#0d1117] border border-[#30363d] rounded-xl p-4 flex items-center justify-between hover:border-[#8b949e] transition-colors">
+                            <div className="flex items-center gap-4">
+                               <div className="w-10 h-10 rounded-full bg-[#161b22] border border-[#30363d] flex items-center justify-center shrink-0">
+                                 <History className="w-5 h-5 text-[#8b949e]" />
+                               </div>
+                               <div>
+                                 <div className="font-semibold text-white text-sm mb-1">{commit.message}</div>
+                                 <div className="text-xs text-[#8b949e]">
+                                   {new Date(commit.timestamp).toLocaleString()} by <span className="text-[#c9d1d9] font-medium">{repo.owner?.username}</span>
+                                 </div>
+                               </div>
+                            </div>
+                            <div className="hidden md:flex items-center gap-2">
+                               <span className="px-3 py-1 bg-[#238636]/10 text-[#2ea043] border border-[#2ea043]/30 text-[10px] font-bold uppercase tracking-wider rounded-md">
+                                 {filename}
+                               </span>
+                            </div>
+                         </div>
+                       );
+                     })}
+                     {(!repo.commits || repo.commits.length === 0) && (
+                       <div className="text-center py-8 text-[#8b949e] text-sm">
+                         No recent activity.
+                       </div>
+                     )}
+                   </div>
+                </div>
+             </div>
+          </div>
+        )}
+
+        {/* SETTINGS TAB */}
+        {activeTab === 'settings' && (
+          <div className="flex-1 p-8 overflow-y-auto">
+             <div className="max-w-3xl mx-auto space-y-8">
+                <h2 className="text-2xl font-semibold text-white border-b border-[#30363d] pb-2">Settings</h2>
+                
+                <div className="border border-[#f85149] rounded-lg overflow-hidden">
+                   <div className="bg-[#f85149]/10 p-4 border-b border-[#f85149]">
+                      <h3 className="text-lg font-semibold text-[#f85149] flex items-center gap-2">
+                        <Shield className="w-5 h-5" /> Danger Zone
+                      </h3>
+                   </div>
+                   <div className="bg-[#0d1117] p-6 space-y-4">
+                      <p className="text-sm text-[#c9d1d9]">This action cannot be undone. This will permanently delete the <span className="font-bold">{repo.owner?.username}/{repo.name}</span> repository, wiki, issues, and commits.</p>
+                      <div className="bg-[#161b22] border border-[#30363d] rounded p-4 flex flex-col gap-3">
+                         <label className="text-sm font-medium">Please type <span className="font-bold">{repo.name}</span> to confirm.</label>
+                         <input 
+                           type="text" 
+                           value={deleteConfirmText}
+                           onChange={e => setDeleteConfirmText(e.target.value)}
+                           className="w-full bg-[#0d1117] border border-[#30363d] rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-[#f85149]"
+                         />
+                         <button 
+                           disabled={deleteConfirmText !== repo.name || isDeletingRepo}
+                           onClick={handleDeleteRepo}
+                           className="self-start bg-[#f85149] hover:bg-[#d1242f] text-white font-medium py-1.5 px-4 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm"
+                         >
+                           {isDeletingRepo ? 'Deleting...' : 'Delete this repository'}
+                         </button>
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </div>
+        )}
+
       </div>
 
       {/* Floating Chat Button */}
-      <button className="fixed bottom-6 right-6 w-14 h-14 bg-[#6366f1] rounded-full flex items-center justify-center shadow-lg hover:bg-[#4f46e5] transition-colors z-50">
-        <MessageSquare className="w-6 h-6 text-white" />
-      </button>
+      <AIChatbot fileContext={activeFile ? `File Path: ${activeFile.path}\n\n${activeFile.content}` : `Repository: ${repo?.name}\nDescription: ${repo?.description}`} />
     </div>
   );
 }

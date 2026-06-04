@@ -58,7 +58,7 @@ router.post('/chat', authenticate, async (req: any, res) => {
         return res.status(500).json({ error: 'AI not configured' });
       }
 
-      let systemInstruction = "You are DevCollab's AI assistant. Answer queries regarding the code.";
+      let systemInstruction = "You are DevCollab's AI coding assistant. ALWAYS format your responses using rich Markdown. Use code blocks with syntax highlighting, bullet points, and bold text to make your answers easy to read.";
       if (fileContext) {
           systemInstruction += ` The user is currently looking at this code:\n\n${fileContext}`;
       }

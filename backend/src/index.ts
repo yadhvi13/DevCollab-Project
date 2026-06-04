@@ -9,6 +9,8 @@ import cors from 'cors';
 import authRoutes from './routes/auth';
 import repoRoutes from './routes/repo';
 import aiRoutes from './routes/ai';
+import userRoutes from './routes/users';
+import postRoutes from './routes/posts';
 
 const app = express();
 const server = http.createServer(app);
@@ -26,6 +28,8 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/repos', repoRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/posts', postRoutes);
 
 // Socket.io for Real-time Collaboration
 io.on('connection', (socket) => {
@@ -51,6 +55,26 @@ io.on('connection', (socket) => {
 
   socket.on('kanban-update', (data: { repoId: string, kanban: any[] }) => {
     socket.to(data.repoId).emit('kanban-update', data);
+  });
+
+  // Global Chat logic
+  socket.on('join-room', (roomId: string) => {
+    socket.join(`global-${roomId}`);
+    console.log(`Socket ${socket.id} joined global room ${roomId}`);
+  });
+
+  socket.on('leave-room', (roomId: string) => {
+    socket.leave(`global-${roomId}`);
+    console.log(`Socket ${socket.id} left global room ${roomId}`);
+  });
+
+  socket.on('global-chat-message', (data: { room: string, message: string, user: any }) => {
+    const messageData = {
+      ...data,
+      timestamp: new Date(),
+      id: Math.random().toString(36).substring(2, 9)
+    };
+    io.to(`global-${data.room}`).emit('global-chat-message', messageData);
   });
 
   socket.on('disconnect', () => {

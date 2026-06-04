@@ -34,6 +34,7 @@ export interface IRepository extends Document {
   files: IFile[];
   commits: ICommit[];
   kanban: IKanbanTask[];
+  discussions: { _id?: string; author: string; content: string; timestamp: Date }[];
 }
 
 const FileSchema = new Schema({
@@ -59,6 +60,12 @@ const KanbanTaskSchema = new Schema({
   author: { type: String, required: true },
 }, { _id: false });
 
+const DiscussionSchema = new Schema({
+  author: { type: String, required: true },
+  content: { type: String, required: true },
+  timestamp: { type: Date, default: Date.now },
+}, { _id: true });
+
 const RepositorySchema: Schema = new Schema({
   name: { type: String, required: true },
   description: { type: String, default: '' },
@@ -70,6 +77,7 @@ const RepositorySchema: Schema = new Schema({
   files: [FileSchema],
   commits: [CommitSchema],
   kanban: [KanbanTaskSchema],
+  discussions: [DiscussionSchema],
 }, {
   timestamps: true,
 });
