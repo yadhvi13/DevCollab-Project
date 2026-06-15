@@ -1,8 +1,10 @@
+"use client";
+
 import React from 'react';
 import Particles, { ParticlesProvider } from '@tsparticles/react';
 import { loadSlim } from '@tsparticles/slim';
 import type { Engine } from '@tsparticles/engine';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme } from '@/contexts/ThemeContext';
 
 export default function ParticleBackground() {
   const { theme } = useTheme();
@@ -12,15 +14,7 @@ export default function ParticleBackground() {
   };
 
   const getParticleColor = () => {
-    switch(theme) {
-      case 'cyberpunk': return '#f9ed69';
-      case 'neon': return '#00ffff';
-      case 'dracula': return '#ff79c6';
-      case 'nord': return '#88c0d0';
-      case 'ocean': return '#38bdf8';
-      case 'matrix': return '#00ff00';
-      default: return '#58a6ff';
-    }
+    return theme === 'dark' ? '#1c9cf0' : '#1e9df1';
   };
 
   return (

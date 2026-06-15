@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useMemo } from 'react';
-import { format, subDays, getDay, isSameDay, startOfYear, endOfYear, eachDayOfInterval, isAfter } from 'date-fns';
+import { format, subDays, getDay, startOfYear, endOfYear, eachDayOfInterval } from 'date-fns';
 
 interface ContributionGraphProps {
   activities: any[];
@@ -22,8 +24,6 @@ export default function ContributionGraph({ activities, year, availableYears, on
     } else {
       start = startOfYear(new Date(year, 0, 1));
       end = endOfYear(new Date(year, 0, 1));
-      // For past years, we might want to make it exactly 52 weeks or just plot the exact days
-      // Let's stick to full year
     }
 
     const allDays = eachDayOfInterval({ start, end });
@@ -43,7 +43,6 @@ export default function ContributionGraph({ activities, year, availableYears, on
   const totalContributions = activities.length;
 
   // Build the grid (7 rows: Sun to Sat)
-  // We need to pad the first week so it aligns with Sunday
   const startDayOfWeek = getDay(startDate); // 0 = Sunday
   
   const grid: (Date | null)[][] = Array(7).fill(null).map(() => []);
@@ -54,7 +53,6 @@ export default function ContributionGraph({ activities, year, availableYears, on
   }
 
   // Distribute days into the 7 rows
-  let currentColumnIndex = 0;
   days.forEach((day) => {
     const dayOfWeek = getDay(day);
     grid[dayOfWeek].push(day);
@@ -105,13 +103,13 @@ export default function ContributionGraph({ activities, year, availableYears, on
               <div className="flex gap-2">
                 {/* Day Labels (Mon, Wed, Fri) */}
                 <div className="flex flex-col gap-[3px] text-[10px] text-[#8b949e] w-[30px] pt-[2px]">
-                  <span className="h-[12px]"></span> {/* Sun */}
-                  <span className="h-[12px] leading-[12px]">Mon</span> {/* Mon */}
-                  <span className="h-[12px]"></span> {/* Tue */}
-                  <span className="h-[12px] leading-[12px]">Wed</span> {/* Wed */}
-                  <span className="h-[12px]"></span> {/* Thu */}
-                  <span className="h-[12px] leading-[12px]">Fri</span> {/* Fri */}
-                  <span className="h-[12px]"></span> {/* Sat */}
+                  <span className="h-[12px]"></span>
+                  <span className="h-[12px] leading-[12px]">Mon</span>
+                  <span className="h-[12px]"></span>
+                  <span className="h-[12px] leading-[12px]">Wed</span>
+                  <span className="h-[12px]"></span>
+                  <span className="h-[12px] leading-[12px]">Fri</span>
+                  <span className="h-[12px]"></span>
                 </div>
 
                 {/* The actual cells */}
@@ -139,7 +137,7 @@ export default function ContributionGraph({ activities, year, availableYears, on
           </div>
 
           <div className="flex justify-between items-center mt-4">
-            <a href="#" className="text-xs text-[#8b949e] hover:text-[#58a6ff] active:text-indigo-400 transition-colors">Learn how we count contributions</a>
+            <a href="#" className="text-xs text-[#8b949e] hover:text-indigo-500 active:text-indigo-400 transition-colors">Learn how we count contributions</a>
             <div className="flex items-center gap-2 text-xs text-[#8b949e]">
               <span>Less</span>
               <div className="flex gap-[3px]">
@@ -156,14 +154,14 @@ export default function ContributionGraph({ activities, year, availableYears, on
         </div>
       </div>
 
-      {/* Year Selector (Right sidebar on desktop, bottom on mobile) */}
+      {/* Year Selector */}
       <div className="w-full md:w-[150px] shrink-0 pt-[28px] flex flex-row md:flex-col gap-2 overflow-x-auto no-scrollbar">
         {availableYears.map(y => (
           <button
             key={y}
             onClick={() => onYearSelect(y)}
-            className={`px-4 py-2 text-sm rounded-md text-left whitespace-nowrap transition-all duration-200 active:scale-95 ${
-              year === y ? 'bg-[#1f6feb] text-white font-semibold shadow-[0_0_10px_rgba(31,111,235,0.5)]' : 'text-[#8b949e] hover:bg-[#161b22] active:bg-[#1f6feb]/20 active:text-white'
+            className={`px-4 py-2 text-sm rounded-md text-left whitespace-nowrap transition-all duration-200 active:scale-95 cursor-pointer ${
+              year === y ? 'bg-indigo-500 text-zinc-950 font-semibold shadow-[0_0_10px_rgba(231,158,107,0.5)]' : 'text-[#8b949e] hover:bg-[#161b22] active:bg-indigo-500/20 active:text-white'
             }`}
           >
             {y}

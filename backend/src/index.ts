@@ -11,6 +11,7 @@ import repoRoutes from './routes/repo';
 import aiRoutes from './routes/ai';
 import userRoutes from './routes/users';
 import postRoutes from './routes/posts';
+import GlobalMessage from './models/GlobalMessage';
 
 const app = express();
 const server = http.createServer(app);
@@ -65,9 +66,29 @@ io.on('connection', (socket) => {
   });
 
   // Global Chat logic
-  socket.on('join-room', (roomId: string) => {
+  socket.on('join-room', async (roomId: string) => {
     socket.join(`global-${roomId}`);
     console.log(`Socket ${socket.id} joined global room ${roomId}`);
+    
+    // Fetch and send message history for the room
+    try {
+      const history = await GlobalMessage.find({ room: roomId })
+        .sort({ createdAt: 1 })
+        .limit(100);
+      
+      const formattedHistory = history.map(msg => ({
+        id: msg._id,
+        room: msg.room,
+        message: msg.message,
+        user: msg.user,
+        replyTo: msg.replyTo,
+        timestamp: msg.createdAt
+      }));
+      
+      socket.emit('chat-history', formattedHistory);
+    } catch (err) {
+      console.error('Error fetching chat history:', err);
+    }
   });
 
   socket.on('leave-room', (roomId: string) => {
@@ -75,17 +96,48 @@ io.on('connection', (socket) => {
     console.log(`Socket ${socket.id} left global room ${roomId}`);
   });
 
-  socket.on('global-chat-message', (data: { room: string, message: string, user: any, replyTo?: any }) => {
-    const messageData = {
-      ...data,
-      timestamp: new Date(),
-      id: Math.random().toString(36).substring(2, 9)
-    };
-    io.to(`global-${data.room}`).emit('global-chat-message', messageData);
+  socket.on('global-chat-message', async (data: { room: string, message: string, user: any, replyTo?: any }) => {
+    try {
+      // Save message to MongoDB
+      const newMessage = new GlobalMessage({
+        room: data.room,
+        message: data.message,
+        user: {
+          _id: data.user._id || data.user.id,
+          username: data.user.username,
+          avatar: data.user.avatar
+        },
+        replyTo: data.replyTo ? {
+          id: data.replyTo.id,
+          username: data.replyTo.username,
+          message: data.replyTo.message
+        } : null
+      });
+      
+      const savedMessage = await newMessage.save();
+      
+      const messageData = {
+        id: savedMessage._id,
+        room: savedMessage.room,
+        message: savedMessage.message,
+        user: savedMessage.user,
+        replyTo: savedMessage.replyTo,
+        timestamp: savedMessage.createdAt
+      };
+      
+      io.to(`global-${data.room}`).emit('global-chat-message', messageData);
+    } catch (err) {
+      console.error('Error saving global chat message:', err);
+    }
   });
 
-  socket.on('delete-global-message', (data: { room: string, messageId: string }) => {
-    io.to(`global-${data.room}`).emit('delete-global-message', data.messageId);
+  socket.on('delete-global-message', async (data: { room: string, messageId: string }) => {
+    try {
+      await GlobalMessage.deleteOne({ _id: data.messageId });
+      io.to(`global-${data.room}`).emit('delete-global-message', data.messageId);
+    } catch (err) {
+      console.error('Error deleting global message:', err);
+    }
   });
 
   socket.on('disconnect', () => {

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from './AuthContext';
@@ -34,6 +36,9 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return () => {
         newSocket.disconnect();
       };
+    } else {
+      setSocket(null);
+      setOnlineUsers([]);
     }
   }, [user]);
 

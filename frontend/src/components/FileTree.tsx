@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useMemo } from 'react';
 import { Folder, FolderOpen, FileText, ChevronRight, ChevronDown, Trash2 } from 'lucide-react';
 
@@ -51,12 +53,12 @@ const FileTreeNode = ({ node, activeFile, onSelectFile, onDeleteFile, level = 0 
     return (
       <div>
         <div 
-          className="flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-md transition-colors text-[#c9d1d9] hover:bg-[#21262d] cursor-pointer"
+          className="flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-md transition-all text-[#c9d1d9] hover:bg-[#1e1917]/50 cursor-pointer"
           style={{ paddingLeft: `${level * 12 + 8}px` }}
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <ChevronDown className="w-3.5 h-3.5 opacity-70" /> : <ChevronRight className="w-3.5 h-3.5 opacity-70" />}
-          {isOpen ? <FolderOpen className="w-4 h-4 text-[#58a6ff]" /> : <Folder className="w-4 h-4 text-[#8b949e]" />}
+          {isOpen ? <FolderOpen className="w-4 h-4 text-indigo-500" /> : <Folder className="w-4 h-4 text-zinc-500" />}
           <span className="truncate">{node.name}</span>
         </div>
         {isOpen && (
@@ -75,13 +77,13 @@ const FileTreeNode = ({ node, activeFile, onSelectFile, onDeleteFile, level = 0 
     <div className="group relative flex items-center">
       <button 
         onClick={() => onSelectFile(node.fileData)}
-        className={`w-full flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-md transition-colors pr-8 ${activeFile?.path === node.path ? 'bg-[#238636]/10 text-[#58a6ff]' : 'text-[#8b949e] hover:bg-[#21262d] hover:text-[#c9d1d9]'}`}
+        className={`w-full flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-md transition-all pr-8 cursor-pointer ${activeFile?.path === node.path ? 'bg-indigo-500/10 text-indigo-500 font-semibold border-l-2 border-indigo-500 rounded-l-none' : 'text-[#8b949e] hover:bg-[#1e1917]/50 hover:text-[#c9d1d9]'}`}
         style={{ paddingLeft: `${level * 12 + 26}px` }}
       >
         <FileText className="w-4 h-4 opacity-70" />
         <span className="truncate">{node.name}</span>
       </button>
-      <button onClick={(e) => onDeleteFile(e, node.path)} className="absolute right-2 opacity-0 group-hover:opacity-100 p-1 text-[#8b949e] hover:text-[#f85149] hover:bg-[#f85149]/10 rounded transition-all" title="Delete File">
+      <button onClick={(e) => onDeleteFile(e, node.path)} className="absolute right-2 opacity-0 group-hover:opacity-100 p-1 text-[#8b949e] hover:text-[#f85149] hover:bg-[#f85149]/10 rounded transition-all cursor-pointer" title="Delete File">
          <Trash2 className="w-3.5 h-3.5" />
       </button>
     </div>

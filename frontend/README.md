@@ -1,37 +1,36 @@
-# 💻 DevCollab Frontend (Client)
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-This is the frontend client module of the **DevCollab** platform. It is built as a Single Page Application (SPA) using React, TypeScript, Vite, and Tailwind CSS.
+## Getting Started
 
-For the full platform documentation, architecture diagram, and setup instructions, please visit the **[Main Project README](../README.md)**.
+First, run the development server:
 
-## 🛠️ Stack & Key Libraries
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-* **React 19 & TypeScript** — Core application framework.
-* **Tailwind CSS v4 & custom HSL colors** — Glassmorphic, dark-mode design system.
-* **Framer Motion** — Smooth transitions, page entry animations, and hover micro-animations.
-* **TS Particles** — Interactive, modern particle background context.
-* **Monaco Editor (`@monaco-editor/react`)** — Rich browser-based code editing.
-* **Socket.io Client** — Real-time event synchronization (chats, Kanban board, user presence).
-* **React Markdown** — Elegant parsing of AI code reviews and comments.
-* **Drag-and-Drop (`@hello-pangea/dnd`)** — Handles column transitions on Kanban boards.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 🚀 Running Locally
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-Ensure the [Backend service](../backend) is configured and running.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+## Learn More
 
-2. **Run dev server:**
-   ```bash
-   npm run dev
-   ```
-   The development client will run at `http://localhost:5173`.
+To learn more about Next.js, take a look at the following resources:
 
-3. **Production build:**
-   ```bash
-   npm run build
-   ```
-   Generates a static web bundle inside `dist/`.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

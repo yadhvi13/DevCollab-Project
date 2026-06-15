@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useMemo } from 'react';
 import { format } from 'date-fns';
 import { GitCommitHorizontal, BookOpen } from 'lucide-react';
@@ -64,7 +66,7 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
                   <ul className="space-y-2">
                     {Object.entries(commitsByRepo).map(([repoName, count]) => (
                       <li key={repoName} className="flex justify-between items-center text-sm">
-                        <a href={`#`} className="text-[#58a6ff] hover:underline font-semibold">{repoName}</a>
+                        <a href={`#`} className="text-indigo-500 hover:underline font-semibold">{repoName}</a>
                         <div className="flex items-center gap-2">
                           <span className="text-xs text-[#8b949e]">{count} commit{count > 1 ? 's' : ''}</span>
                           <div className="w-[100px] h-2 bg-[#21262d] rounded-full overflow-hidden flex">
@@ -91,7 +93,7 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
                   <ul className="space-y-2">
                     {reposCreated.map(repo => (
                       <li key={repo.repoId} className="flex justify-between items-center text-sm">
-                        <a href={`#`} className="text-[#58a6ff] hover:underline font-semibold flex items-center gap-2">
+                        <a href={`#`} className="text-indigo-500 hover:underline font-semibold flex items-center gap-2">
                           <BookOpen className="w-4 h-4 text-[#8b949e]" /> {repo.repoName}
                         </a>
                         <span className="text-xs text-[#8b949e]">{format(new Date(repo.timestamp), 'MMM d')}</span>
@@ -104,7 +106,7 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
             </div>
             
             <div className="mt-4">
-              <button className="w-full py-2 bg-[#0d1117] border border-[#30363d] rounded-md text-sm text-[#58a6ff] font-semibold hover:bg-[#161b22] transition-colors">
+              <button className="w-full py-2 bg-[#120f0e] border border-[#2d2623] rounded-md text-sm text-indigo-500 font-semibold hover:bg-[#1e1917] transition-colors cursor-pointer">
                 Show more activity
               </button>
             </div>

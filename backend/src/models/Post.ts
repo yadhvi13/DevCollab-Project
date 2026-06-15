@@ -27,4 +27,7 @@ const PostSchema: Schema = new Schema({
   timestamps: true,
 });
 
+// Automatically delete posts after 24 hours (86400 seconds)
+PostSchema.index({ createdAt: 1 }, { expireAfterSeconds: 24 * 60 * 60 });
+
 export default mongoose.model<IPost>('Post', PostSchema);

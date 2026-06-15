@@ -1,9 +1,12 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Bot, X, Send, Maximize2, Minimize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import ReactMarkdown from 'react-markdown';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL } from '@/config';
 
 interface AIChatbotProps {
   fileContext: string;
@@ -23,6 +26,7 @@ export default function AIChatbot({ fileContext }: AIChatbotProps) {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { token } = useAuth();
+  const { theme } = useTheme();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -30,6 +34,12 @@ export default function AIChatbot({ fileContext }: AIChatbotProps) {
   };
 
   useEffect(scrollToBottom, [messages, isOpen]);
+
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener('open-ai-chatbot', handleOpen);
+    return () => window.removeEventListener('open-ai-chatbot', handleOpen);
+  }, []);
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,9 +82,9 @@ export default function AIChatbot({ fileContext }: AIChatbotProps) {
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 rounded-full flex items-center justify-center shadow-2xl hover:bg-indigo-500 transition-colors z-50 group"
+            className="fixed bottom-6 right-6 w-14 h-14 bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-2xl hover:bg-primary/90 transition-all z-50 group cursor-pointer shadow-[0_0_15px_var(--shadow-color)] active:scale-95 duration-200"
           >
-            <Bot className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
+            <Bot className="w-6 h-6 text-primary-foreground group-hover:scale-110 transition-transform" />
           </motion.button>
         )}
       </AnimatePresence>
@@ -86,37 +96,39 @@ export default function AIChatbot({ fileContext }: AIChatbotProps) {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className={`fixed bottom-6 right-6 bg-zinc-900 border border-zinc-700 shadow-2xl z-50 flex flex-col overflow-hidden transition-all duration-300 ${
-              isExpanded ? 'w-[600px] h-[80vh] rounded-2xl' : 'w-80 h-[450px] rounded-xl'
+            className={`fixed bg-card border border-border shadow-2xl z-50 flex flex-col overflow-hidden transition-all duration-300 bottom-0 right-0 left-0 top-0 sm:top-auto sm:left-auto sm:bottom-6 sm:right-6 ${
+              isExpanded 
+                ? 'w-full h-full sm:w-[600px] sm:h-[80vh] rounded-none sm:rounded-2xl' 
+                : 'w-full h-full sm:w-80 sm:h-[450px] rounded-none sm:rounded-xl'
             }`}
           >
             {/* Header */}
-            <div className="h-14 bg-indigo-600 px-4 flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-2 text-white font-medium">
-                <Bot className="w-5 h-5" />
+            <div className="h-14 bg-card border-b border-border px-4 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2 text-foreground font-semibold">
+                <Bot className="w-5 h-5 text-primary" />
                 Gemini Assistant
               </div>
               <div className="flex items-center gap-2">
-                <button onClick={() => setIsExpanded(!isExpanded)} className="text-white/70 hover:text-white p-1">
+                <button onClick={() => setIsExpanded(!isExpanded)} className="text-muted-foreground hover:text-foreground p-1 cursor-pointer">
                   {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                 </button>
-                <button onClick={() => setIsOpen(false)} className="text-white/70 hover:text-white p-1">
+                <button onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-foreground p-1 cursor-pointer">
                   <X className="w-5 h-5" />
                 </button>
               </div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 bg-zinc-950 space-y-4">
+            <div className="flex-1 overflow-y-auto p-4 bg-background space-y-4">
               {messages.map((msg, idx) => (
                 <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] rounded-2xl px-4 py-2 text-sm ${
+                  <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
                     msg.role === 'user' 
-                      ? 'bg-zinc-800 text-zinc-100 rounded-tr-none' 
-                      : 'bg-indigo-900/40 text-indigo-100 rounded-tl-none border border-indigo-500/20'
+                      ? 'bg-primary text-primary-foreground font-medium rounded-tr-none shadow-[0_0_10px_var(--shadow-color)]' 
+                      : 'bg-card text-foreground rounded-tl-none border border-border'
                   }`}>
                     {msg.role === 'model' ? (
-                      <div className="prose prose-invert prose-sm max-w-none">
+                      <div className="prose prose-sm max-w-none dark:prose-invert">
                         <ReactMarkdown>{msg.text}</ReactMarkdown>
                       </div>
                     ) : (
@@ -127,10 +139,10 @@ export default function AIChatbot({ fileContext }: AIChatbotProps) {
               ))}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-indigo-900/40 border border-indigo-500/20 rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-2">
-                    <span className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <span className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <div className="bg-card border border-border rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                   </div>
                 </div>
               )}
@@ -138,22 +150,22 @@ export default function AIChatbot({ fileContext }: AIChatbotProps) {
             </div>
 
             {/* Input */}
-            <div className="p-3 bg-zinc-900 border-t border-zinc-800 shrink-0">
+            <div className="p-3 bg-card border-t border-border shrink-0">
               <form onSubmit={handleSend} className="relative">
                 <input
                   type="text"
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   placeholder="Ask a question about the code..."
-                  className="w-full bg-zinc-950 border border-zinc-700 rounded-lg py-2.5 pl-4 pr-12 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full bg-background border border-border rounded-full py-2.5 pl-4 pr-12 text-sm text-foreground focus:outline-none focus:border-primary/50 transition-colors"
                   disabled={isLoading}
                 />
                 <button
                   type="submit"
                   disabled={isLoading || !input.trim()}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-indigo-600 rounded-md text-white hover:bg-indigo-500 disabled:opacity-50 transition-colors"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary rounded-full text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition-all flex items-center justify-center cursor-pointer h-[32px] w-[32px] border-none"
                 >
-                  <Send className="w-4 h-4" />
+                  <Send className="w-4 h-4 text-primary-foreground" />
                 </button>
               </form>
             </div>

@@ -1,6 +1,8 @@
+"use client";
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'github-dark' | 'cyberpunk' | 'neon' | 'dracula' | 'nord' | 'ocean' | 'matrix';
+type Theme = 'light' | 'dark';
 
 interface ThemeContextType {
   theme: Theme;
@@ -8,16 +10,21 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: 'github-dark',
+  theme: 'dark',
   setTheme: () => {}
 });
 
 export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    return (localStorage.getItem('devcollab-theme') as Theme) || 'github-dark';
-  });
+  const [theme, setThemeState] = useState<Theme>('dark');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const savedTheme = (localStorage.getItem('devcollab-theme') as Theme) || 'dark';
+    setThemeState(savedTheme);
+    setMounted(true);
+  }, []);
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme);
@@ -25,8 +32,16 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
+    if (mounted) {
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.style.colorScheme = 'dark';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.style.colorScheme = 'light';
+      }
+    }
+  }, [theme, mounted]);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>

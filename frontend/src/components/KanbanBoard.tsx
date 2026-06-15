@@ -1,10 +1,12 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Plus } from 'lucide-react';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL } from '@/config';
 
 interface Task {
   id: string;
@@ -58,7 +60,6 @@ export default function KanbanBoard({ repoId, initialKanban }: { repoId: string,
         const newIndex = items.findIndex(i => i.id === over.id);
         const newItems = arrayMove(items, oldIndex, newIndex);
         
-        // If moving across columns (this is a simple implementation, typically requires multiple sortable contexts for strict column movement, but this allows reordering visually and we infer column based on drop zone in more complex setups. For simplicity, we keep column state unless explicitly dragged into a drop zone, but sortable doesn't handle column crossing easily without multiple contexts. Let's just update the array order for now).
         saveKanban(newItems);
         return newItems;
       });
@@ -69,7 +70,7 @@ export default function KanbanBoard({ repoId, initialKanban }: { repoId: string,
     e.preventDefault();
     if (!newTaskTitle.trim() || !user) return;
     const newTask: Task = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).substring(2, 9),
       column: 'todo',
       title: newTaskTitle,
       desc: '',
@@ -87,38 +88,38 @@ export default function KanbanBoard({ repoId, initialKanban }: { repoId: string,
 
   return (
     <div className="flex flex-col h-full bg-zinc-950">
-      <div className="p-3 border-b border-zinc-800">
+      <div className="p-3 border-b border-[#2d2623] bg-zinc-950">
         <form onSubmit={addTask} className="flex gap-2">
           <input 
             type="text" 
             value={newTaskTitle}
             onChange={e => setNewTaskTitle(e.target.value)}
-            placeholder="Add task..." 
-            className="flex-1 bg-zinc-900 border border-zinc-800 rounded py-1 px-2 text-sm focus:outline-none focus:border-indigo-500"
+            placeholder="Add new task..." 
+            className="flex-1 bg-zinc-900 border border-[#2d2623] rounded-full py-1.5 px-4 text-sm focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 text-[#c9d1d9] transition-all placeholder-zinc-500"
           />
-          <button type="submit" className="bg-indigo-600 p-1.5 rounded text-white hover:bg-indigo-500"><Plus className="w-4 h-4"/></button>
+          <button type="submit" className="bg-indigo-500 text-zinc-950 p-1.5 rounded-full hover:bg-indigo-400 cursor-pointer transition-all flex items-center justify-center shadow-[0_0_10px_rgba(231,158,107,0.2)] active:scale-95 h-[34px] w-[34px] border-none"><Plus className="w-5 h-5 text-zinc-950"/></button>
         </form>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-6">
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           
-          <div className="bg-zinc-900/50 p-3 rounded-xl border border-zinc-800">
-            <h3 className="text-xs font-bold text-zinc-500 mb-3 uppercase tracking-wider">To Do</h3>
+          <div className="bg-zinc-900/40 p-4 rounded-2xl border border-[#2d2623] shadow-lg">
+            <h3 className="text-xs font-extrabold text-zinc-400 mb-3 uppercase tracking-wider">To Do</h3>
             <SortableContext items={todoTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
               {todoTasks.map(task => <SortableTask key={task.id} task={task} />)}
             </SortableContext>
           </div>
 
-          <div className="bg-zinc-900/50 p-3 rounded-xl border border-zinc-800">
-            <h3 className="text-xs font-bold text-indigo-400 mb-3 uppercase tracking-wider">In Progress</h3>
+          <div className="bg-zinc-900/40 p-4 rounded-2xl border border-[#2d2623] shadow-lg">
+            <h3 className="text-xs font-extrabold text-indigo-500 mb-3 uppercase tracking-wider">In Progress</h3>
             <SortableContext items={inProgressTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
               {inProgressTasks.map(task => <SortableTask key={task.id} task={task} />)}
             </SortableContext>
           </div>
 
-          <div className="bg-zinc-900/50 p-3 rounded-xl border border-zinc-800">
-            <h3 className="text-xs font-bold text-emerald-500 mb-3 uppercase tracking-wider">Done</h3>
+          <div className="bg-zinc-900/40 p-4 rounded-2xl border border-[#2d2623] shadow-lg">
+            <h3 className="text-xs font-extrabold text-amber-500 mb-3 uppercase tracking-wider">Done</h3>
             <SortableContext items={doneTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
               {doneTasks.map(task => <SortableTask key={task.id} task={task} />)}
             </SortableContext>

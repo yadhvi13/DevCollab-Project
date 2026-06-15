@@ -1,131 +1,193 @@
+"use client";
+
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { FolderGit2, Search, Bell, Plus, ChevronDown, Menu, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
+import { 
+  FolderGit2, Search, Bell, Plus, ChevronDown, Menu, X, Settings, LogOut, 
+  User as UserIcon, Sun, Moon 
+} from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+  DropdownMenuGroup
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const [showPlusMenu, setShowPlusMenu] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const router = useRouter();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   return (
-    <header className="bg-[#161b22] border-b border-[#30363d] px-4 py-3 flex items-center justify-between z-50 sticky top-0 shrink-0">
+    <header className="bg-background/90 border-b border-border px-4 py-3 flex items-center justify-between z-50 sticky top-0 shrink-0 analytics-header backdrop-blur-md">
       <div className="flex items-center gap-4 flex-1">
         {/* Mobile Menu Button */}
         <button 
-          className="md:hidden text-[#8b949e] hover:text-white active:scale-95 transition-all"
+          className="md:hidden text-muted-foreground hover:text-foreground active:scale-95 transition-all cursor-pointer"
           onClick={() => setShowMobileMenu(!showMobileMenu)}
         >
           {showMobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
 
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-          <div className="bg-white p-1 rounded-md">
-            <FolderGit2 className="w-6 h-6 text-black" />
+        <Link href="/" className="flex items-center gap-2 cursor-pointer">
+          <div className="relative flex items-center justify-center w-8 h-8 rounded-full border border-primary/30 bg-primary/10 shadow-[0_0_12px_var(--shadow-color)] mr-1">
+            <div className="w-2.5 h-2.5 bg-primary rounded-full" />
           </div>
-          <span className="font-bold text-lg text-white tracking-tight hidden sm:block">DEVCOLLAB</span>
-        </div>
+          <span className="font-bold text-lg text-foreground tracking-widest font-space-mono hidden sm:block">DEVCOLLAB</span>
+        </Link>
         
         <div className="relative w-64 ml-4 hidden md:block">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8b949e]" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input 
             type="text" 
             placeholder="Quick search... (cmd + k)"
-            className="w-full bg-[#0d1117] border border-[#30363d] rounded-md py-1.5 pl-9 pr-3 text-sm text-[#c9d1d9] focus:outline-none focus:border-[#58a6ff] focus:ring-1 focus:ring-[#58a6ff] transition-all"
+            className="w-full bg-input border border-border rounded-md py-1.5 pl-9 pr-3 text-sm text-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all"
           />
         </div>
 
-        <nav className="hidden md:flex items-center gap-4 text-sm font-semibold ml-2">
-          <a onClick={() => navigate('/feed')} className="cursor-pointer hover:text-white active:text-indigo-400 transition-colors">Social Feed</a>
-          <a onClick={() => navigate('/chat')} className="cursor-pointer hover:text-white active:text-indigo-400 transition-colors">Global Chat</a>
-          <a href="#" className="hover:text-white active:text-indigo-400 transition-colors">Marketplace</a>
+        <nav className="hidden md:flex items-center gap-6 text-xs font-semibold font-space-mono tracking-wider ml-4">
+          <Link href="/feed" className="cursor-pointer text-muted-foreground hover:text-foreground active:text-primary transition-colors">Social Feed</Link>
+          <Link href="/chat" className="cursor-pointer text-muted-foreground hover:text-foreground active:text-primary transition-colors">Global Chat</Link>
+          <a href="#" className="text-muted-foreground hover:text-foreground active:text-primary transition-colors">Marketplace</a>
         </nav>
       </div>
 
       <div className="flex items-center gap-3">
-        <button className="text-[#8b949e] hover:text-white active:scale-90 transition-all relative">
+        {/* Theme Toggle Button */}
+        <button 
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className="text-muted-foreground hover:text-foreground active:scale-90 transition-all cursor-pointer p-1 rounded-md hover:bg-muted"
+          title={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
+        >
+          {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+        </button>
+
+        <button className="text-muted-foreground hover:text-foreground active:scale-90 transition-all relative cursor-pointer p-1 rounded-md hover:bg-muted">
           <Bell className="w-5 h-5" />
-          <span className="absolute top-0 right-0 w-2 h-2 bg-blue-500 rounded-full border-2 border-[#161b22]"></span>
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full border-2 border-background"></span>
         </button>
         
-        <div className="relative group" onMouseEnter={() => setShowPlusMenu(true)} onMouseLeave={() => setShowPlusMenu(false)}>
-          <button onClick={() => setShowPlusMenu(!showPlusMenu)} className="text-[#8b949e] hover:text-white active:text-indigo-400 transition-colors flex items-center gap-1 cursor-pointer">
-            <Plus className="w-5 h-5" />
-            <ChevronDown className="w-3 h-3" />
-          </button>
-
-          {/* Plus Dropdown */}
-          <div className={`absolute right-0 mt-2 w-56 bg-[#161b22] border border-[#30363d] rounded-md shadow-xl transition-all z-50 ${showPlusMenu ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
-            <div className="px-4 py-2 border-b border-[#30363d]">
-              <p className="text-[10px] font-bold text-[#8b949e] tracking-wider uppercase">New Actions</p>
-            </div>
-            <div className="py-1 border-b border-[#30363d]">
-              <button onClick={() => { setShowPlusMenu(false); navigate('/create'); }} className="w-full text-left px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white active:bg-indigo-600/20 active:text-white transition-colors">Create Repository</button>
-              <button onClick={() => { setShowPlusMenu(false); navigate('/import'); }} className="w-full text-left px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white active:bg-indigo-600/20 active:text-white transition-colors">Import Repository</button>
-              <button onClick={() => { setShowPlusMenu(false); navigate('/project/new'); }} className="w-full text-left px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white active:bg-indigo-600/20 active:text-white transition-colors">New Project</button>
-            </div>
-            <div className="py-1">
-               <button onClick={() => { setShowPlusMenu(false); navigate('/explore'); }} className="w-full text-center px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white active:bg-indigo-600/20 active:text-white transition-colors">Explore more repositories</button>
-            </div>
-          </div>
-        </div>
-        
-        <div className="relative group" onMouseEnter={() => setShowProfileMenu(true)} onMouseLeave={() => setShowProfileMenu(false)}>
-          <div className="relative shrink-0 cursor-pointer" onClick={() => setShowProfileMenu(!showProfileMenu)}>
-            <button 
-              className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold border border-[#30363d] hover:border-zinc-400 transition-all shadow-[0_0_10px_rgba(99,102,241,0.5)]"
-              title="Profile"
-            >
-              {user?.avatar ? (
-                <img src={user.avatar} alt="Profile" className="w-full h-full object-cover rounded-full" />
-              ) : (
-                user?.username?.charAt(0).toUpperCase()
-              )}
+        {/* Plus Action Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="text-muted-foreground hover:text-foreground active:text-primary transition-colors flex items-center gap-1 cursor-pointer focus:outline-none">
+              <Plus className="w-5 h-5" />
+              <ChevronDown className="w-3 h-3" />
             </button>
-            <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 border-2 border-[#161b22] rounded-full z-10" />
-          </div>
-          
-          {/* Dropdown on hover/click */}
-          <div className={`absolute right-0 mt-2 w-48 bg-[#161b22] border border-[#30363d] rounded-md shadow-xl transition-all z-50 ${showProfileMenu ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
-            <div className="px-4 py-2 border-b border-[#30363d]">
-              <p className="text-xs text-[#8b949e]">Signed in as</p>
-              <p className="text-sm font-bold text-white truncate">{user?.username}</p>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56 bg-card border-border text-foreground z-50">
+            <DropdownMenuLabel className="text-[10px] font-bold text-muted-foreground tracking-wider uppercase">New Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-border" />
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => router.push('/create')} className="cursor-pointer focus:bg-muted focus:text-foreground">
+                Create Repository
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/import')} className="cursor-pointer focus:bg-muted focus:text-foreground">
+                Import Repository
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/project/new')} className="cursor-pointer focus:bg-muted focus:text-foreground">
+                New Project
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator className="bg-border" />
+            <DropdownMenuItem onClick={() => router.push('/explore')} className="cursor-pointer focus:bg-muted focus:text-foreground text-center justify-center font-medium">
+              Explore Repositories
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        
+        {/* User Profile Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div className="relative shrink-0 cursor-pointer focus:outline-none">
+              <button 
+                className="w-7 h-7 rounded-full bg-gradient-to-tr from-primary to-indigo-500 flex items-center justify-center text-white text-xs font-bold border border-border hover:border-muted-foreground transition-all shadow-[0_0_10px_var(--shadow-color)] cursor-pointer"
+                title="Profile"
+              >
+                {user?.avatar ? (
+                  <img src={user.avatar} alt="Profile" className="w-full h-full object-cover rounded-full" />
+                ) : (
+                  user?.username?.charAt(0).toUpperCase()
+                )}
+              </button>
+              <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 border-2 border-background rounded-full z-10" />
             </div>
-            <div className="py-1">
-              <button onClick={() => { setShowProfileMenu(false); navigate('/profile'); }} className="w-full text-left px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white">Your profile</button>
-              <button onClick={() => { setShowProfileMenu(false); navigate('/'); }} className="w-full text-left px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white">Your repositories</button>
-              <button onClick={() => { setShowProfileMenu(false); navigate('/'); }} className="w-full text-left px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white">Your projects</button>
-              <div className="border-t border-[#30363d] my-1"></div>
-              <button onClick={() => { setShowProfileMenu(false); navigate('/profile'); }} className="w-full text-left px-4 py-2 text-sm text-[#c9d1d9] hover:bg-[#0d1117] hover:text-white">Settings</button>
-              <button onClick={() => { setShowProfileMenu(false); logout(); }} className="w-full text-left px-4 py-2 text-sm text-[#f85149] hover:bg-[#0d1117]">Sign out</button>
-            </div>
-          </div>
-        </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-48 bg-card border-border text-foreground z-50">
+            <DropdownMenuLabel className="flex flex-col">
+              <span className="text-xs text-muted-foreground font-normal">Signed in as</span>
+              <span className="text-sm font-bold text-foreground truncate">{user?.username}</span>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-border" />
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => router.push('/profile')} className="cursor-pointer focus:bg-muted focus:text-foreground flex gap-2">
+                <UserIcon className="w-4 h-4" /> Your Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/')} className="cursor-pointer focus:bg-muted focus:text-foreground flex gap-2">
+                <FolderGit2 className="w-4 h-4" /> Your Repositories
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator className="bg-border" />
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => router.push('/profile')} className="cursor-pointer focus:bg-muted focus:text-foreground flex gap-2">
+                <Settings className="w-4 h-4" /> Settings
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => logout()} className="cursor-pointer focus:bg-muted text-destructive focus:text-destructive focus:bg-muted flex gap-2">
+                <LogOut className="w-4 h-4" /> Sign out
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Mobile Menu Dropdown */}
       {showMobileMenu && (
-        <div className="absolute top-full left-0 right-0 bg-[#161b22] border-b border-[#30363d] shadow-xl md:hidden z-50">
+        <div className="absolute top-full left-0 right-0 bg-background/95 backdrop-blur-md border-b border-border shadow-2xl md:hidden z-50">
           <nav className="flex flex-col text-sm font-semibold p-2">
             <button 
-              onClick={() => { setShowMobileMenu(false); navigate('/feed'); }} 
-              className="w-full text-left px-4 py-3 text-[#c9d1d9] hover:text-white hover:bg-[#0d1117] active:bg-indigo-600/20 active:text-white rounded-md transition-colors"
+              onClick={() => { setShowMobileMenu(false); router.push('/feed'); }} 
+              className="w-full text-left px-4 py-3 text-foreground hover:text-primary hover:bg-muted active:bg-primary/20 active:text-primary rounded-md transition-colors cursor-pointer"
             >
               Social Feed
             </button>
             <button 
-              onClick={() => { setShowMobileMenu(false); navigate('/chat'); }} 
-              className="w-full text-left px-4 py-3 text-[#c9d1d9] hover:text-white hover:bg-[#0d1117] active:bg-indigo-600/20 active:text-white rounded-md transition-colors"
+              onClick={() => { setShowMobileMenu(false); router.push('/chat'); }} 
+              className="w-full text-left px-4 py-3 text-foreground hover:text-primary hover:bg-muted active:bg-primary/20 active:text-primary rounded-md transition-colors cursor-pointer"
             >
               Global Chat
             </button>
             <button 
-              className="w-full text-left px-4 py-3 text-[#c9d1d9] hover:text-white hover:bg-[#0d1117] active:bg-indigo-600/20 active:text-white rounded-md transition-colors"
+              className="w-full text-left px-4 py-3 text-foreground hover:text-primary hover:bg-muted active:bg-primary/20 active:text-primary rounded-md transition-colors cursor-pointer"
             >
               Marketplace
             </button>
+            
+            {/* Mobile Theme Toggle */}
+            <div className="flex items-center justify-between px-4 py-3 border-t border-border mt-1">
+              <span className="text-sm font-semibold text-muted-foreground">Theme</span>
+              <button 
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground hover:text-primary transition-colors cursor-pointer"
+              >
+                {theme === 'dark' ? (
+                  <>
+                    <Sun className="w-4 h-4" /> Light Mode
+                  </>
+                ) : (
+                  <>
+                    <Moon className="w-4 h-4" /> Dark Mode
+                  </>
+                )}
+              </button>
+            </div>
           </nav>
         </div>
       )}

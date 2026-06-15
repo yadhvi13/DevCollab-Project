@@ -7,7 +7,8 @@ const router = express.Router();
 // Get social feed
 router.get('/', authenticate, async (req, res) => {
   try {
-    const posts = await Post.find()
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const posts = await Post.find({ createdAt: { $gte: twentyFourHoursAgo } })
       .sort({ createdAt: -1 })
       .populate('user', 'username avatar level xp')
       .populate('comments.user', 'username avatar');

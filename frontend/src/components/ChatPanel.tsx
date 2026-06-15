@@ -1,7 +1,9 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Socket } from 'socket.io-client';
 import { Send } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface ChatPanelProps {
   repoId: string;
@@ -111,7 +113,7 @@ export default function ChatPanel({ repoId, user, socket }: ChatPanelProps) {
           />
           <button 
             type="submit"
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-indigo-600 rounded-full text-white hover:bg-indigo-500 transition-colors"
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-indigo-600 rounded-full text-white hover:bg-indigo-500 transition-colors cursor-pointer"
           >
             <Send className="w-3 h-3" />
           </button>
