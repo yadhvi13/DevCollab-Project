@@ -65,11 +65,11 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
                   </h4>
                   <ul className="space-y-2">
                     {Object.entries(commitsByRepo).map(([repoName, count]) => (
-                      <li key={repoName} className="flex justify-between items-center text-sm">
-                        <a href={`#`} className="text-indigo-500 hover:underline font-semibold">{repoName}</a>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-[#8b949e]">{count} commit{count > 1 ? 's' : ''}</span>
-                          <div className="w-[100px] h-2 bg-[#21262d] rounded-full overflow-hidden flex">
+                      <li key={repoName} className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 text-sm">
+                        <a href={`#`} className="text-indigo-500 hover:underline font-semibold break-all">{repoName}</a>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-xs text-[#8b949e] whitespace-nowrap">{count} commit{count > 1 ? 's' : ''}</span>
+                          <div className="w-[100px] h-2 bg-[#21262d] rounded-full overflow-hidden flex shrink-0">
                             <div className="bg-[#238636] h-full" style={{ width: `${Math.min((count / commits.length) * 100, 100)}%` }}></div>
                           </div>
                         </div>
@@ -92,11 +92,11 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
                   </h4>
                   <ul className="space-y-2">
                     {reposCreated.map(repo => (
-                      <li key={repo.repoId} className="flex justify-between items-center text-sm">
-                        <a href={`#`} className="text-indigo-500 hover:underline font-semibold flex items-center gap-2">
-                          <BookOpen className="w-4 h-4 text-[#8b949e]" /> {repo.repoName}
+                      <li key={repo.repoId} className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 text-sm">
+                        <a href={`#`} className="text-indigo-500 hover:underline font-semibold flex items-center gap-2 break-all">
+                          <BookOpen className="w-4 h-4 text-[#8b949e] shrink-0" /> {repo.repoName}
                         </a>
-                        <span className="text-xs text-[#8b949e]">{format(new Date(repo.timestamp), 'MMM d')}</span>
+                        <span className="text-xs text-[#8b949e] whitespace-nowrap shrink-0">{format(new Date(repo.timestamp), 'MMM d')}</span>
                       </li>
                     ))}
                   </ul>

@@ -8,24 +8,40 @@ const router = express.Router();
 const calculateGamification = async (userId: string) => {
   const activities = await Activity.find({ user: userId }).sort({ timestamp: -1 });
   
-  let xp = 0;
+  const formatDate = (d: Date) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // Group activities by local date string
+  const activitiesByDay: { [dateStr: string]: number } = {};
   activities.forEach(act => {
-    if (act.type === 'CREATE_REPO') xp += 50;
-    else if (act.type === 'COMMIT') xp += 10;
-    else xp += 5;
+    const dateStr = formatDate(new Date(act.timestamp));
+    activitiesByDay[dateStr] = (activitiesByDay[dateStr] || 0) + 1;
   });
 
-  const level = Math.floor(xp / 1000) + 1;
+  // Calculate XP based on active days and contribution counts per day
+  let xp = 0;
+  Object.keys(activitiesByDay).forEach(dateStr => {
+    const count = activitiesByDay[dateStr];
+    // 10 XP base for the active day, plus 2 XP per contribution, capped at 20 XP max per day
+    const dayXp = Math.min(10 + count * 2, 20);
+    xp += dayXp;
+  });
+
+  const level = Math.floor(xp / 100) + 1;
 
   // Calculate streak
-  const activeDays = new Set(activities.map(act => new Date(act.timestamp).toISOString().split('T')[0]));
+  const activeDays = new Set(activities.map(act => formatDate(new Date(act.timestamp))));
   
   const today = new Date();
-  const yesterday = new Date(today);
+  const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
 
-  const todayStr = today.toISOString().split('T')[0];
-  const yesterdayStr = yesterday.toISOString().split('T')[0];
+  const todayStr = formatDate(today);
+  const yesterdayStr = formatDate(yesterday);
 
   let streak = 0;
   let currDate = new Date();
@@ -41,7 +57,7 @@ const calculateGamification = async (userId: string) => {
 
   if (streak > 0) {
     while (true) {
-      const dateStr = currDate.toISOString().split('T')[0];
+      const dateStr = formatDate(currDate);
       if (activeDays.has(dateStr)) {
         streak++;
         currDate.setDate(currDate.getDate() - 1);
