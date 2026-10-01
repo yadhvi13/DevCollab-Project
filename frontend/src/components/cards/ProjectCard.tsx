@@ -58,18 +58,18 @@ export default function ProjectCard({ repo, onStar, isStarred, className = "" }:
       className={`flip-card ${isFlipped ? 'flipped' : ''} ${className}`}
       onMouseLeave={() => setIsFlipped(false)}
     >
-      <div className="flip-card-inner h-full min-h-[300px]">
+      <div className="flip-card-inner h-full min-h-[290px]">
         
         {/* ==========================================
-            FRONT SIDE (Frosted Glass with Image 2 Vibe)
+            FRONT SIDE
         ========================================== */}
-        <div className="flip-card-front glass-card p-6 flex flex-col justify-between overflow-hidden bg-white/90 border border-white/80 shadow-[0_16px_36px_rgba(0,0,0,0.05)]">
+        <div className="flip-card-front p-5 sm:p-6 flex flex-col justify-between overflow-hidden bg-white dark:bg-[#121316] border border-[#E2E0DB] dark:border-zinc-800 shadow-xs rounded-2xl">
           
           {/* Top Row: Owner & Pill Badge */}
           <div>
-            <div className="flex items-center justify-between gap-2 mb-4">
+            <div className="flex items-center justify-between gap-2 mb-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-2xl bg-[#FFB800] flex items-center justify-center text-xs font-black text-[#111827] shadow-sm overflow-hidden shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-[#B7194B] flex items-center justify-center text-xs font-black text-white shadow-sm overflow-hidden shrink-0">
                   {repo.owner?.avatar ? (
                     <img src={repo.owner.avatar} alt={repo.owner.username} className="w-full h-full object-cover" />
                   ) : (
@@ -77,20 +77,20 @@ export default function ProjectCard({ repo, onStar, isStarred, className = "" }:
                   )}
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-gray-800 block truncate">
+                  <span className="text-xs font-bold text-[#1C1917] dark:text-zinc-200 block truncate max-w-[120px]">
                     {repo.owner?.username || 'developer'}
                   </span>
-                  <span className="text-[10px] text-gray-400 font-medium">
+                  <span className="text-[10px] text-zinc-400 font-medium">
                     {repo.updatedAt ? new Date(repo.updatedAt).toLocaleDateString() : 'Recently'}
                   </span>
                 </div>
               </div>
 
               <span
-                className={`inline-flex items-center gap-1 text-[11px] font-bold px-3 py-1 rounded-full ${
+                className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                   repo.isPrivate
-                    ? 'bg-amber-50 text-amber-700 border border-amber-200/60'
-                    : 'bg-red-50 text-[#EA384C] border border-red-200/60'
+                    ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'
+                    : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
                 }`}
               >
                 {repo.isPrivate ? <Lock className="w-3 h-3" /> : <Globe className="w-3 h-3" />}
@@ -100,22 +100,22 @@ export default function ProjectCard({ repo, onStar, isStarred, className = "" }:
 
             {/* Title */}
             <Link href={`/repo/${repo._id}`} className="block group">
-              <h3 className="font-display font-extrabold text-xl text-[#111827] group-hover:text-[#EA384C] transition-colors line-clamp-1 mb-2">
+              <h3 className="font-display font-extrabold text-lg text-[#1C1917] dark:text-white group-hover:text-[#B7194B] transition-colors line-clamp-1 mb-1.5">
                 {repo.name}
               </h3>
             </Link>
 
             {/* Description */}
-            <p className="font-sans text-xs text-gray-500 line-clamp-2 leading-relaxed mb-4">
+            <p className="font-sans text-xs text-zinc-600 dark:text-zinc-400 line-clamp-2 leading-relaxed mb-3">
               {repo.description || 'Modern collaborative coding project.'}
             </p>
 
             {/* Tag Badges */}
-            <div className="flex flex-wrap gap-1.5 mb-4">
+            <div className="flex flex-wrap gap-1 mb-3">
               {detectedTags.map((tag) => (
                 <span
                   key={tag}
-                  className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-700 border border-gray-200/50"
+                  className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-stone-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border border-[#E2E0DB] dark:border-zinc-700/60"
                 >
                   {tag}
                 </span>
@@ -124,97 +124,92 @@ export default function ProjectCard({ repo, onStar, isStarred, className = "" }:
           </div>
 
           {/* Bottom Row */}
-          <div className="pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-gray-700">
+          <div className="pt-3 border-t border-[#E2E0DB] dark:border-zinc-800 flex items-center justify-between text-xs font-bold text-zinc-600 dark:text-zinc-400">
             <div className="flex items-center gap-3">
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   if (onStar) {
                     onStar(repo._id);
                   }
                 }}
-                className={`inline-flex items-center gap-1 hover:text-[#EA384C] transition-colors cursor-pointer ${
-                  isStarred ? 'text-[#EA384C]' : 'text-gray-500'
+                className={`inline-flex items-center gap-1 hover:text-[#B7194B] transition-colors cursor-pointer ${
+                  isStarred ? 'text-[#B7194B]' : 'text-zinc-500'
                 }`}
               >
-                <Star className={`w-4 h-4 ${isStarred ? 'fill-[#EA384C]' : ''}`} />
+                <Star className={`w-3.5 h-3.5 ${isStarred ? 'fill-[#B7194B]' : ''}`} />
                 <span>{repo.stars?.length || 0}</span>
               </button>
 
-              <span className="inline-flex items-center gap-1 text-gray-400">
+              <span className="inline-flex items-center gap-1 text-zinc-400 text-xs">
                 <GitFork className="w-3.5 h-3.5" />
                 <span>{repo.forksCount || 0}</span>
               </span>
             </div>
 
-            {/* Flip Trigger Button (Cute Red Arrow Badge like Image 2) */}
+            {/* Flip Trigger Button */}
             <button
+              type="button"
               onClick={() => setIsFlipped(!isFlipped)}
-              className="w-8 h-8 rounded-full bg-[#EA384C] hover:bg-[#D3283C] text-white flex items-center justify-center shadow-[0_6px_16px_rgba(234,56,76,0.3)] transition-transform hover:rotate-45 cursor-pointer"
+              className="w-7 h-7 rounded-full bg-[#B7194B] hover:bg-[#c92055] text-white flex items-center justify-center shadow-xs transition-transform hover:rotate-45 cursor-pointer"
               title="Flip for details"
             >
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
         </div>
 
         {/* ==========================================
-            BACK SIDE (Flip Animation Details)
+            BACK SIDE
         ========================================== */}
-        <div className="flip-card-back glass-card p-6 flex flex-col justify-between bg-gradient-to-br from-[#FFF8F8] to-[#FFFBF0] border-2 border-[#EA384C]/20 shadow-[0_20px_45px_rgba(234,56,76,0.08)]">
+        <div className="flip-card-back p-5 sm:p-6 flex flex-col justify-between bg-stone-50 dark:bg-zinc-900 border border-[#B7194B]/30 shadow-md rounded-2xl">
           
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#EA384C] animate-ping" />
-                <span className="text-xs font-black uppercase tracking-wider text-[#EA384C]">
-                  Project Overview
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#B7194B] animate-ping" />
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#B7194B]">
+                  Repository Details
                 </span>
               </div>
               <button
+                type="button"
                 onClick={() => setIsFlipped(false)}
-                className="p-1 rounded-full text-gray-400 hover:text-gray-700 transition-colors"
+                className="p-1 rounded-full text-zinc-400 hover:text-zinc-700 dark:hover:text-white transition-colors cursor-pointer"
                 title="Flip back"
               >
-                <RotateCw className="w-4 h-4" />
+                <RotateCw className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <h4 className="font-display font-extrabold text-lg text-[#111827] mb-2 truncate">
+            <p className="text-xs text-[#1C1917] dark:text-zinc-300 font-semibold mb-3">
               {repo.name}
-            </h4>
+            </p>
 
-            {/* Project Quick Stats */}
-            <div className="grid grid-cols-2 gap-2.5 my-4">
-              <div className="bg-white/80 p-2.5 rounded-2xl border border-gray-100 shadow-sm">
-                <span className="text-[10px] text-gray-400 block font-bold">Files Tracked</span>
-                <span className="font-display font-extrabold text-base text-[#111827]">
-                  {repo.files?.length || 0} files
-                </span>
+            <div className="space-y-1.5 text-xs text-zinc-600 dark:text-zinc-400">
+              <div className="flex items-center justify-between">
+                <span>Files</span>
+                <span className="font-mono text-[11px] font-bold text-[#1C1917] dark:text-white">{repo.files?.length || 0}</span>
               </div>
-              <div className="bg-white/80 p-2.5 rounded-2xl border border-gray-100 shadow-sm">
-                <span className="text-[10px] text-gray-400 block font-bold">Total Commits</span>
-                <span className="font-display font-extrabold text-base text-[#111827]">
-                  {repo.commits?.length || 0} commits
-                </span>
+              <div className="flex items-center justify-between">
+                <span>Commits</span>
+                <span className="font-mono text-[11px] font-bold text-[#1C1917] dark:text-white">{repo.commits?.length || 1}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Collaborators</span>
+                <span className="font-mono text-[11px] font-bold text-[#1C1917] dark:text-white">{repo.collaborators?.length || 0}</span>
               </div>
             </div>
-
-            <p className="text-xs text-gray-600 line-clamp-2">
-              Includes real-time Monaco Code Editor, live Socket.io presence, and Gemini AI assistant.
-            </p>
           </div>
 
-          {/* Launch Studio Button */}
-          <div className="pt-3">
-            <Link
-              href={`/repo/${repo._id}`}
-              className="btn-pill-red w-full py-2.5 text-xs font-bold text-center block shadow-[0_8px_20px_rgba(234,56,76,0.3)]"
-            >
-              Launch Studio Workspace →
-            </Link>
-          </div>
+          <Link
+            href={`/repo/${repo._id}`}
+            className="w-full py-2 rounded-full bg-[#B7194B] hover:bg-[#c92055] text-white text-xs font-bold text-center block transition-all hover:scale-105"
+          >
+            Launch in Workspace →
+          </Link>
 
         </div>
 

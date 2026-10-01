@@ -931,7 +931,7 @@ export default function ShowcasePresentation() {
 
         {/* Full App Link */}
         <Link
-          href={user ? "/dashboard" : "/explore"}
+          href="/app"
           className="ml-2 pl-3 border-l border-white/20 text-xs font-bold text-white/90 hover:text-white hover:underline flex items-center gap-1.5"
         >
           <span>Open Full App</span>
