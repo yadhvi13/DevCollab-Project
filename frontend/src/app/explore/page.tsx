@@ -102,36 +102,36 @@ function ExploreContent() {
   }, [developers, searchQuery, selectedTag]);
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-[#111827] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F4F2EF] dark:bg-[#090909] text-[#1C1917] dark:text-zinc-100 flex flex-col font-sans transition-colors duration-200">
       <Navbar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-12 py-8 md:py-12">
         
         {/* Header Title */}
         <div className="mb-8">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-50 text-[#EA384C] text-xs font-bold border border-red-100 mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-rose-50 dark:bg-[#B7194B]/15 text-[#B7194B] dark:text-rose-400 text-xs font-bold border border-rose-100 dark:border-[#B7194B]/30 mb-3">
             <Compass className="w-3.5 h-3.5" />
             <span>Directory & Ecosystem</span>
           </div>
-          <h1 className="font-display font-extrabold text-3xl sm:text-5xl text-[#111827] tracking-tight">
-            Discover What's <span className="text-[#EA384C]">Being Built</span>
+          <h1 className="font-display font-extrabold text-3xl sm:text-5xl text-[#1C1917] dark:text-white tracking-tight">
+            Discover What's <span className="text-[#B7194B]">Being Built</span>
           </h1>
-          <p className="font-sans text-sm text-gray-500 mt-1.5 max-w-lg">
+          <p className="font-sans text-sm text-zinc-500 dark:text-zinc-400 mt-1.5 max-w-lg">
             Search real open-source repositories and connect with passionate software engineers building together.
           </p>
         </div>
 
         {/* View Toggle & Search Bar */}
-        <div className="glass-card p-4 bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_12px_32px_rgba(0,0,0,0.04)] rounded-3xl mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="glass-card p-4 bg-white/85 dark:bg-[#121316]/90 backdrop-blur-xl border border-[#E2E0DB] dark:border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)] rounded-3xl mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
           
           {/* Animated Pill Tab Switcher */}
-          <div className="flex items-center p-1 rounded-full bg-gray-100/80 border border-gray-200/60 w-full md:w-auto">
+          <div className="flex items-center p-1 rounded-full bg-gray-100/80 dark:bg-zinc-800/80 border border-gray-200/60 dark:border-zinc-750 w-full md:w-auto">
             <button
               onClick={() => setActiveTab('projects')}
               className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 activeTab === 'projects'
-                  ? 'bg-[#111827] text-white shadow-sm'
-                  : 'text-gray-600 hover:text-[#111827]'
+                  ? 'bg-[#B7194B] text-white shadow-sm'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-[#1C1917] dark:hover:text-white'
               }`}
             >
               <FolderGit2 className="w-4 h-4" /> Projects ({filteredProjects.length})
@@ -141,8 +141,8 @@ function ExploreContent() {
               onClick={() => setActiveTab('developers')}
               className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 activeTab === 'developers'
-                  ? 'bg-[#111827] text-white shadow-sm'
-                  : 'text-gray-600 hover:text-[#111827]'
+                  ? 'bg-[#B7194B] text-white shadow-sm'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-[#1C1917] dark:hover:text-white'
               }`}
             >
               <Users className="w-4 h-4" /> Developers ({filteredDevelopers.length})
@@ -151,18 +151,18 @@ function ExploreContent() {
 
           {/* Search Input */}
           <div className="relative w-full md:max-w-md">
-            <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder={activeTab === 'projects' ? "Filter repositories by name or author..." : "Filter developers by skill or username..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full text-xs py-2.5 pl-10 pr-8 bg-gray-50 border border-gray-200/80 rounded-full focus:outline-none focus:border-[#EA384C] focus:bg-white focus:ring-2 focus:ring-[#EA384C]/15 transition-all text-[#111827]"
+              className="w-full text-xs py-2.5 pl-10 pr-8 bg-gray-50 dark:bg-[#18191E] border border-gray-200/80 dark:border-zinc-800 rounded-full focus:outline-none focus:border-[#B7194B] focus:bg-white dark:focus:bg-[#121316] focus:ring-2 focus:ring-[#B7194B]/15 transition-all text-[#1C1917] dark:text-zinc-100 placeholder:text-zinc-400"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#111827]"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-[#1C1917] dark:hover:text-white"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -175,9 +175,9 @@ function ExploreContent() {
           
           {/* Left Filter Sidebar (3 cols) */}
           <aside className="lg:col-span-3 space-y-6">
-            <div className="glass-card p-5 bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_12px_32px_rgba(0,0,0,0.04)] rounded-3xl">
-              <div className="flex items-center gap-2 font-display font-extrabold text-sm text-[#111827] border-b border-gray-100 pb-3 mb-4">
-                <SlidersHorizontal className="w-4 h-4 text-[#EA384C]" /> Filter by Tech Stack
+            <div className="glass-card p-5 bg-white/85 dark:bg-[#121316]/90 backdrop-blur-xl border border-[#E2E0DB] dark:border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)] rounded-3xl">
+              <div className="flex items-center gap-2 font-display font-extrabold text-sm text-[#1C1917] dark:text-white border-b border-gray-100 dark:border-zinc-800 pb-3 mb-4">
+                <SlidersHorizontal className="w-4 h-4 text-[#B7194B]" /> Filter by Tech Stack
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -187,8 +187,8 @@ function ExploreContent() {
                     onClick={() => setSelectedTag(tag)}
                     className={`text-xs font-bold px-3 py-1.5 rounded-full transition-all cursor-pointer ${
                       selectedTag === tag
-                        ? 'bg-[#FFB800] text-[#111827] shadow-sm scale-105'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200/70 hover:text-[#111827]'
+                        ? 'bg-[#B7194B] text-white shadow-xs scale-105'
+                        : 'bg-stone-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-stone-200/70 dark:hover:bg-zinc-700 hover:text-[#1C1917] dark:hover:text-white'
                     }`}
                   >
                     {selectedTag === tag && <Check className="w-3 h-3 inline-block mr-1" />}
@@ -200,7 +200,7 @@ function ExploreContent() {
               {selectedTag !== 'All' && (
                 <button
                   onClick={() => setSelectedTag('All')}
-                  className="text-xs font-bold text-[#EA384C] hover:underline mt-4 block"
+                  className="text-xs font-bold text-[#B7194B] hover:underline mt-4 block"
                 >
                   Clear Tag Filter
                 </button>
@@ -208,10 +208,10 @@ function ExploreContent() {
             </div>
 
             {/* Hint Box */}
-            <div className="glass-card p-5 bg-gradient-to-br from-[#EFF6FF] to-white border border-blue-100 shadow-sm rounded-3xl text-[#111827]">
-              <h4 className="font-display font-extrabold text-sm mb-1 text-blue-900">Open Source Platform</h4>
-              <p className="text-xs text-gray-600 font-medium leading-relaxed">
-                All projects are backed by real MongoDB database records and support live real-time commits.
+            <div className="glass-card p-5 bg-gradient-to-br from-[#EFF6FF] to-white dark:from-[#131722] dark:to-[#121316] border border-blue-100 dark:border-white/10 shadow-xs rounded-3xl text-[#1C1917] dark:text-zinc-100">
+              <h4 className="font-display font-extrabold text-sm mb-1 text-blue-900 dark:text-blue-200">Open Source Platform</h4>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 font-medium leading-relaxed">
+                All projects are backed by real database records and support live real-time commits.
               </p>
             </div>
           </aside>
@@ -221,14 +221,14 @@ function ExploreContent() {
             {loading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="glass-card p-6 h-64 animate-pulse bg-white/60 rounded-3xl" />
+                  <div key={i} className="glass-card p-6 h-64 animate-pulse bg-white/60 dark:bg-zinc-800/60 rounded-3xl" />
                 ))}
               </div>
             ) : activeTab === 'projects' ? (
               /* Projects Grid */
               filteredProjects.length === 0 ? (
                 <EmptyState
-                  icon={<FolderGit2 className="w-8 h-8 text-[#EA384C]" />}
+                  icon={<FolderGit2 className="w-8 h-8 text-[#B7194B]" />}
                   title="No projects found"
                   description={
                     searchQuery || selectedTag !== 'All'
@@ -285,7 +285,7 @@ function ExploreContent() {
 
 export default function ExplorePage() {
   return (
-    <React.Suspense fallback={<div className="min-h-screen bg-[#FAFAFA]" />}>
+    <React.Suspense fallback={<div className="min-h-screen bg-[#F4F2EF] dark:bg-[#090909]" />}>
       <ExploreContent />
     </React.Suspense>
   );

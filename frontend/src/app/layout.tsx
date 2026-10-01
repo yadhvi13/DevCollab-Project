@@ -35,8 +35,32 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${outfit.variable} ${plusJakartaSans.variable} ${spaceMono.variable}`}>
-      <body className={`${outfit.className} min-h-screen bg-[#FAFAFA] text-[#111827] antialiased selection:bg-[#FFB800] selection:text-[#111827]`}>
+    <html lang="en" className={`dark ${outfit.variable} ${plusJakartaSans.variable} ${spaceMono.variable}`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('devcollab-theme');
+                  if (saved === 'light') {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    document.documentElement.style.colorScheme = 'light';
+                  } else {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    document.documentElement.style.colorScheme = 'dark';
+                  }
+                } catch(e) {
+                  document.documentElement.classList.add('dark');
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className={`${outfit.className} min-h-screen bg-[#F4F2EF] dark:bg-[#090909] text-[#1C1917] dark:text-zinc-100 antialiased selection:bg-[#B7194B] selection:text-white transition-colors duration-200`}>
         <Providers>
           {children}
         </Providers>

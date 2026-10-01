@@ -72,7 +72,7 @@ export default function ContributionGraph({ activities, year, availableYears, on
   });
 
   const getIntensityClass = (count: number) => {
-    if (count === 0) return 'bg-[#161b22]'; // Empty
+    if (count === 0) return 'bg-stone-200 dark:bg-[#161b22]'; // Empty
     if (count === 1) return 'bg-[#0e4429]'; // Low
     if (count <= 3) return 'bg-[#006d32]'; // Med
     if (count <= 5) return 'bg-[#26a641]'; // High
@@ -82,8 +82,8 @@ export default function ContributionGraph({ activities, year, availableYears, on
   return (
     <div className="flex flex-col md:flex-row gap-6 mt-6">
       <div className="flex-1 min-w-0">
-        <h2 className="text-sm text-white mb-2">{totalContributions} contributions in {isCurrentYear ? 'the last year' : year}</h2>
-        <div className="border border-[#30363d] bg-[#0d1117] rounded-xl p-5 overflow-hidden">
+        <h2 className="text-sm text-[#1C1917] dark:text-white mb-2">{totalContributions} contributions in {isCurrentYear ? 'the last year' : year}</h2>
+        <div className="border border-[#E2E0DB] dark:border-zinc-800 bg-stone-50 dark:bg-[#0d1117] rounded-xl p-5 overflow-hidden">
           
           <div className="overflow-x-auto pb-4 no-scrollbar">
             <div className="relative min-w-max">
@@ -137,11 +137,11 @@ export default function ContributionGraph({ activities, year, availableYears, on
           </div>
 
           <div className="flex justify-between items-center mt-4">
-            <a href="#" className="text-xs text-[#8b949e] hover:text-indigo-500 active:text-indigo-400 transition-colors">Learn how we count contributions</a>
-            <div className="flex items-center gap-2 text-xs text-[#8b949e]">
+            <span className="text-xs text-zinc-500 dark:text-[#8b949e]">Real-time tracked contributions</span>
+            <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-[#8b949e]">
               <span>Less</span>
               <div className="flex gap-[3px]">
-                <div className="w-[12px] h-[12px] rounded-sm bg-[#161b22] outline outline-1 outline-offset-[-1px] outline-white/5" />
+                <div className="w-[12px] h-[12px] rounded-sm bg-stone-200 dark:bg-[#161b22] outline outline-1 outline-offset-[-1px] outline-black/5 dark:outline-white/5" />
                 <div className="w-[12px] h-[12px] rounded-sm bg-[#0e4429] outline outline-1 outline-offset-[-1px] outline-white/5" />
                 <div className="w-[12px] h-[12px] rounded-sm bg-[#006d32] outline outline-1 outline-offset-[-1px] outline-white/5" />
                 <div className="w-[12px] h-[12px] rounded-sm bg-[#26a641] outline outline-1 outline-offset-[-1px] outline-white/5" />
@@ -160,8 +160,10 @@ export default function ContributionGraph({ activities, year, availableYears, on
           <button
             key={y}
             onClick={() => onYearSelect(y)}
-            className={`px-4 py-2 text-sm rounded-md text-left whitespace-nowrap transition-all duration-200 active:scale-95 cursor-pointer ${
-              year === y ? 'bg-indigo-500 text-zinc-950 font-semibold shadow-[0_0_10px_rgba(231,158,107,0.5)]' : 'text-[#8b949e] hover:bg-[#161b22] active:bg-indigo-500/20 active:text-white'
+            className={`px-4 py-2 text-sm rounded-xl text-left whitespace-nowrap transition-all duration-200 active:scale-95 cursor-pointer font-bold ${
+              year === y 
+                ? 'bg-[#B7194B] text-white shadow-xs' 
+                : 'text-zinc-600 dark:text-[#8b949e] hover:bg-stone-200/60 dark:hover:bg-[#161b22] hover:text-[#1C1917] dark:hover:text-white'
             }`}
           >
             {y}

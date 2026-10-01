@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
-import { Mail, Lock, User as UserIcon, ArrowLeft, ArrowRight, CheckCircle2, Sparkles, Terminal } from 'lucide-react';
+import { Mail, Lock, User as UserIcon, ArrowLeft, ArrowRight, ArrowUpRight, CheckCircle2, Sparkles, Terminal } from 'lucide-react';
 import { API_BASE_URL } from '@/config';
 
 export default function AuthPage() {
@@ -16,6 +16,7 @@ export default function AuthPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [resetLink, setResetLink] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const { login } = useAuth();
@@ -33,6 +34,7 @@ export default function AuthPage() {
     e.preventDefault();
     setError('');
     setMessage('');
+    setResetLink('');
     setIsLoading(true);
 
     if (isForgotPassword) {
@@ -51,6 +53,9 @@ export default function AuthPage() {
         }
 
         setMessage(data.message || 'If this email is registered, a password reset link has been sent.');
+        if (data.resetUrl) {
+          setResetLink(data.resetUrl);
+        }
         setIsLoading(false);
       } catch (err) {
         setError('An error occurred. Please try again.');
@@ -196,10 +201,24 @@ export default function AuthPage() {
               initial={{ opacity: 0, y: -6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
-              className="mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs font-medium text-emerald-300 flex items-center gap-2"
+              className="mb-4 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs font-medium text-emerald-300 space-y-2.5"
             >
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>{message}</span>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>{message}</span>
+              </div>
+              {resetLink && (
+                <div className="pt-2 border-t border-emerald-500/20 flex items-center justify-between gap-2">
+                  <span className="text-[11px] text-emerald-400/90 font-mono">Reset Link Ready</span>
+                  <a
+                    href={resetLink}
+                    className="px-3 py-1 bg-[#B7194B] hover:bg-[#c92055] text-white text-[11px] font-bold rounded-full transition-colors flex items-center gap-1 shadow-xs cursor-pointer"
+                  >
+                    <span>Open Reset Page</span>
+                    <ArrowUpRight className="w-3 h-3" />
+                  </a>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

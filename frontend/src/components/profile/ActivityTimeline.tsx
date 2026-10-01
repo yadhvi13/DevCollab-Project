@@ -22,7 +22,7 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
 
   if (activities.length === 0) {
     return (
-      <div className="mt-8 text-center text-[#8b949e] py-10 border border-[#30363d] rounded-xl border-dashed">
+      <div className="mt-8 text-center text-zinc-500 dark:text-[#8b949e] py-10 border border-[#E2E0DB] dark:border-[#30363d] rounded-xl border-dashed">
         <p>No activity found for this period.</p>
       </div>
     );
@@ -45,32 +45,32 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
 
         return (
           <div key={monthStr} className="mb-8">
-            <h3 className="text-xs font-semibold text-white mb-4 flex items-center">
+            <h3 className="text-xs font-semibold text-[#1C1917] dark:text-white mb-4 flex items-center">
               {monthStr}
-              <div className="ml-4 h-[1px] bg-[#30363d] flex-1"></div>
+              <div className="ml-4 h-[1px] bg-[#E2E0DB] dark:bg-[#30363d] flex-1"></div>
             </h3>
 
-            <div className="relative border-l border-[#30363d] ml-3 space-y-6 pb-4">
+            <div className="relative border-l border-[#E2E0DB] dark:border-[#30363d] ml-3 space-y-6 pb-4">
               
               {/* Commits Section */}
               {commits.length > 0 && (
                 <div className="relative pl-6">
-                  <div className="absolute left-[-13px] top-0 bg-[#0d1117] p-1">
-                    <div className="w-4 h-4 bg-[#21262d] rounded-full flex items-center justify-center ring-1 ring-[#30363d]">
-                      <GitCommitHorizontal className="w-3 h-3 text-[#8b949e]" />
+                  <div className="absolute left-[-13px] top-0 bg-white dark:bg-[#0d1117] p-1">
+                    <div className="w-4 h-4 bg-stone-100 dark:bg-[#21262d] rounded-full flex items-center justify-center ring-1 ring-[#E2E0DB] dark:ring-[#30363d]">
+                      <GitCommitHorizontal className="w-3 h-3 text-[#B7194B]" />
                     </div>
                   </div>
-                  <h4 className="text-sm font-semibold text-[#c9d1d9] mb-2">
+                  <h4 className="text-sm font-semibold text-[#1C1917] dark:text-[#c9d1d9] mb-2">
                     Created {commits.length} commit{commits.length > 1 ? 's' : ''} in {repoCount} repositor{repoCount > 1 ? 'ies' : 'y'}
                   </h4>
                   <ul className="space-y-2">
                     {Object.entries(commitsByRepo).map(([repoName, count]) => (
                       <li key={repoName} className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 text-sm">
-                        <a href={`#`} className="text-indigo-500 hover:underline font-semibold break-all">{repoName}</a>
+                        <a href={`#`} className="text-[#B7194B] hover:underline font-semibold break-all">{repoName}</a>
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-xs text-[#8b949e] whitespace-nowrap">{count} commit{count > 1 ? 's' : ''}</span>
-                          <div className="w-[100px] h-2 bg-[#21262d] rounded-full overflow-hidden flex shrink-0">
-                            <div className="bg-[#238636] h-full" style={{ width: `${Math.min((count / commits.length) * 100, 100)}%` }}></div>
+                          <span className="text-xs text-zinc-500 dark:text-[#8b949e] whitespace-nowrap">{count} commit{count > 1 ? 's' : ''}</span>
+                          <div className="w-[100px] h-2 bg-stone-200 dark:bg-[#21262d] rounded-full overflow-hidden flex shrink-0">
+                            <div className="bg-[#B7194B] h-full" style={{ width: `${Math.min((count / commits.length) * 100, 100)}%` }}></div>
                           </div>
                         </div>
                       </li>
@@ -82,21 +82,21 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
               {/* Repositories Created Section */}
               {reposCreated.length > 0 && (
                 <div className="relative pl-6">
-                  <div className="absolute left-[-13px] top-0 bg-[#0d1117] p-1">
-                    <div className="w-4 h-4 bg-[#21262d] rounded-full flex items-center justify-center ring-1 ring-[#30363d]">
-                      <BookOpen className="w-3 h-3 text-[#8b949e]" />
+                  <div className="absolute left-[-13px] top-0 bg-white dark:bg-[#0d1117] p-1">
+                    <div className="w-4 h-4 bg-stone-100 dark:bg-[#21262d] rounded-full flex items-center justify-center ring-1 ring-[#E2E0DB] dark:ring-[#30363d]">
+                      <BookOpen className="w-3 h-3 text-[#B7194B]" />
                     </div>
                   </div>
-                  <h4 className="text-sm font-semibold text-[#c9d1d9] mb-2">
+                  <h4 className="text-sm font-semibold text-[#1C1917] dark:text-[#c9d1d9] mb-2">
                     Created {reposCreated.length} repositor{reposCreated.length > 1 ? 'ies' : 'y'}
                   </h4>
                   <ul className="space-y-2">
                     {reposCreated.map(repo => (
                       <li key={repo.repoId} className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 text-sm">
-                        <a href={`#`} className="text-indigo-500 hover:underline font-semibold flex items-center gap-2 break-all">
-                          <BookOpen className="w-4 h-4 text-[#8b949e] shrink-0" /> {repo.repoName}
+                        <a href={`#`} className="text-[#B7194B] hover:underline font-semibold flex items-center gap-2 break-all">
+                          <BookOpen className="w-4 h-4 text-[#B7194B] shrink-0" /> {repo.repoName}
                         </a>
-                        <span className="text-xs text-[#8b949e] whitespace-nowrap shrink-0">{format(new Date(repo.timestamp), 'MMM d')}</span>
+                        <span className="text-xs text-zinc-500 dark:text-[#8b949e] whitespace-nowrap shrink-0">{format(new Date(repo.timestamp), 'MMM d')}</span>
                       </li>
                     ))}
                   </ul>
@@ -106,7 +106,7 @@ export default function ActivityTimeline({ activities }: ActivityTimelineProps) 
             </div>
             
             <div className="mt-4">
-              <button className="w-full py-2 bg-[#120f0e] border border-[#2d2623] rounded-md text-sm text-indigo-500 font-semibold hover:bg-[#1e1917] transition-colors cursor-pointer">
+              <button className="w-full py-2 bg-white dark:bg-[#121316] border border-[#E2E0DB] dark:border-zinc-800 rounded-xl text-sm text-[#B7194B] font-semibold hover:bg-stone-50 dark:hover:bg-zinc-800/80 transition-colors cursor-pointer">
                 Show more activity
               </button>
             </div>

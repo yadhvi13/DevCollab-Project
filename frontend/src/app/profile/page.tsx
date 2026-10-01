@@ -148,10 +148,10 @@ function ProfileContent() {
 
   if (!profile) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] text-[#111827] flex flex-col font-sans">
+      <div className="min-h-screen bg-[#F4F2EF] dark:bg-[#090909] text-[#1C1917] dark:text-zinc-100 flex flex-col font-sans transition-colors duration-200">
         <Navbar />
         <div className="flex-1 flex items-center justify-center">
-          <div className="w-8 h-8 border-3 border-[#EA384C] border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-3 border-[#B7194B] border-t-transparent rounded-full animate-spin" />
         </div>
       </div>
     );
@@ -160,13 +160,13 @@ function ProfileContent() {
   const allSkills = Array.from(new Set([...(profile.skills || []), ...(profile.techStack || [])]));
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-[#111827] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F4F2EF] dark:bg-[#090909] text-[#1C1917] dark:text-zinc-100 flex flex-col font-sans transition-colors duration-200">
       <Navbar />
 
       <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-12 py-8 md:py-12 flex-1">
         
         {/* Profile Top Hero Card */}
-        <div className="glass-card p-6 md:p-8 bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_16px_36px_rgba(0,0,0,0.04)] rounded-3xl mb-10 relative overflow-hidden">
+        <div className="glass-card p-6 md:p-8 bg-white/85 dark:bg-[#121316]/90 backdrop-blur-xl border border-[#E2E0DB] dark:border-white/10 shadow-[0_16px_36px_rgba(0,0,0,0.04)] dark:shadow-[0_16px_36px_rgba(0,0,0,0.4)] rounded-3xl mb-10 relative overflow-hidden">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             
             {/* Left: Avatar & Identity */}
@@ -186,30 +186,30 @@ function ProfileContent() {
 
               <div>
                 <div className="flex flex-wrap items-center gap-2.5 mb-1.5">
-                  <h1 className="font-display font-extrabold text-2xl sm:text-4xl text-[#111827] tracking-tight">
+                  <h1 className="font-display font-extrabold text-2xl sm:text-4xl text-[#1C1917] dark:text-white tracking-tight">
                     {profile.username}
                   </h1>
                   {profile.openToWork && (
-                    <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60 inline-flex items-center gap-1">
+                    <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-500/20 inline-flex items-center gap-1">
                       <Briefcase className="w-3 h-3" /> Available for Hire
                     </span>
                   )}
                 </div>
 
-                <p className="font-sans text-xs sm:text-sm text-gray-500 max-w-lg mb-3 font-normal leading-relaxed">
+                <p className="font-sans text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-lg mb-3 font-normal leading-relaxed">
                   {profile.bio || 'Software developer and collaborative builder on DevCollab.'}
                 </p>
 
                 {/* Gamification Level and Streak pills */}
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200/60 inline-flex items-center gap-1">
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200/60 dark:border-amber-500/20 inline-flex items-center gap-1">
                     <Zap className="w-3.5 h-3.5 text-[#FFB800] fill-[#FFB800]" /> Level {profile.level || 1}
                   </span>
-                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60">
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-200/60 dark:border-blue-500/20">
                     ⭐ {profile.xp || 0} XP
                   </span>
-                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-orange-50 text-orange-700 border border-orange-200/60 inline-flex items-center gap-1">
-                    <Flame className="w-3.5 h-3.5 text-[#EA384C] fill-[#EA384C]" /> {profile.streak || 0} Day Streak
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-rose-50 dark:bg-[#B7194B]/10 text-[#B7194B] dark:text-rose-400 border border-rose-200/60 dark:border-[#B7194B]/20 inline-flex items-center gap-1">
+                    <Flame className="w-3.5 h-3.5 text-[#B7194B] fill-[#B7194B]" /> {profile.streak || 0} Day Streak
                   </span>
                 </div>
               </div>
@@ -220,7 +220,7 @@ function ProfileContent() {
               <div className="self-end md:self-auto">
                 <button
                   onClick={() => setIsEditing(!isEditing)}
-                  className="btn-pill-red text-xs py-2.5 px-6 font-bold flex items-center gap-2 shadow-[0_8px_20px_rgba(234,56,76,0.25)] cursor-pointer"
+                  className="btn-pill-red text-xs py-2.5 px-6 font-bold flex items-center gap-2 shadow-[0_8px_20px_rgba(183,25,75,0.25)] cursor-pointer"
                 >
                   <Edit3 className="w-4 h-4" /> {isEditing ? 'Cancel Editing' : 'Edit Profile'}
                 </button>
@@ -230,49 +230,49 @@ function ProfileContent() {
 
           {/* Edit Form Modal / Accordion */}
           {isEditing && (
-            <div className="mt-8 pt-6 border-t border-gray-100">
-              <h3 className="font-display font-extrabold text-lg text-[#111827] mb-4">Edit Your Profile</h3>
+            <div className="mt-8 pt-6 border-t border-gray-100 dark:border-zinc-800">
+              <h3 className="font-display font-extrabold text-lg text-[#1C1917] dark:text-white mb-4">Edit Your Profile</h3>
               <form onSubmit={handleUpdateProfile} className="space-y-4 max-w-2xl">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Avatar Image URL</label>
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">Avatar Image URL</label>
                   <input
                     type="text"
                     placeholder="https://example.com/photo.jpg"
                     value={editForm.avatar}
                     onChange={(e) => setEditForm({ ...editForm, avatar: e.target.value })}
-                    className="w-full text-xs py-2 px-3.5 bg-gray-50 border border-gray-200/80 rounded-2xl focus:outline-none focus:border-[#EA384C] text-[#111827]"
+                    className="w-full text-xs py-2 px-3.5 bg-gray-50 dark:bg-[#18191E] border border-gray-200/80 dark:border-zinc-800 rounded-2xl focus:outline-none focus:border-[#B7194B] text-[#1C1917] dark:text-zinc-100"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Bio / Headline</label>
+                  <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">Bio / Headline</label>
                   <textarea
                     rows={2}
                     value={editForm.bio}
                     onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
-                    className="w-full text-xs p-3.5 bg-gray-50 border border-gray-200/80 rounded-2xl focus:outline-none focus:border-[#EA384C] text-[#111827] resize-none"
+                    className="w-full text-xs p-3.5 bg-gray-50 dark:bg-[#18191E] border border-gray-200/80 dark:border-zinc-800 rounded-2xl focus:outline-none focus:border-[#B7194B] text-[#1C1917] dark:text-zinc-100 resize-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Skills (comma separated)</label>
+                    <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">Skills (comma separated)</label>
                     <input
                       type="text"
                       placeholder="React, Node.js, Next.js"
                       value={editForm.skills}
                       onChange={(e) => setEditForm({ ...editForm, skills: e.target.value })}
-                      className="w-full text-xs py-2 px-3.5 bg-gray-50 border border-gray-200/80 rounded-2xl focus:outline-none focus:border-[#EA384C] text-[#111827]"
+                      className="w-full text-xs py-2 px-3.5 bg-gray-50 dark:bg-[#18191E] border border-gray-200/80 dark:border-zinc-800 rounded-2xl focus:outline-none focus:border-[#B7194B] text-[#1C1917] dark:text-zinc-100"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Tech Stack</label>
+                    <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider mb-1">Tech Stack</label>
                     <input
                       type="text"
                       placeholder="TypeScript, Python, MongoDB"
                       value={editForm.techStack}
                       onChange={(e) => setEditForm({ ...editForm, techStack: e.target.value })}
-                      className="w-full text-xs py-2 px-3.5 bg-gray-50 border border-gray-200/80 rounded-2xl focus:outline-none focus:border-[#EA384C] text-[#111827]"
+                      className="w-full text-xs py-2 px-3.5 bg-gray-50 dark:bg-[#18191E] border border-gray-200/80 dark:border-zinc-800 rounded-2xl focus:outline-none focus:border-[#B7194B] text-[#1C1917] dark:text-zinc-100"
                     />
                   </div>
                 </div>
@@ -282,16 +282,16 @@ function ProfileContent() {
                     type="checkbox"
                     checked={editForm.openToWork}
                     onChange={(e) => setEditForm({ ...editForm, openToWork: e.target.checked })}
-                    className="w-4 h-4 accent-[#EA384C] rounded"
+                    className="w-4 h-4 accent-[#B7194B] rounded"
                   />
-                  <span className="text-xs font-bold text-gray-700">Mark as open to work / available for hire</span>
+                  <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300">Mark as open to work / available for hire</span>
                 </label>
 
                 <div className="flex gap-3 pt-2">
                   <button
                     type="submit"
                     disabled={saving}
-                    className="btn-pill-red px-6 py-2.5 text-xs font-bold shadow-[0_8px_20px_rgba(234,56,76,0.3)]"
+                    className="btn-pill-red px-6 py-2.5 text-xs font-bold shadow-[0_8px_20px_rgba(183,25,75,0.3)]"
                   >
                     {saving ? 'Saving...' : 'Save Profile Changes'}
                   </button>
@@ -306,14 +306,14 @@ function ProfileContent() {
           
           {/* Left Column (4 cols): Skills & Badges */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="glass-card p-6 bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_12px_32px_rgba(0,0,0,0.04)] rounded-3xl">
-              <h3 className="font-display font-extrabold text-lg text-[#111827] mb-3">Skills & Technologies</h3>
+            <div className="glass-card p-6 bg-white/85 dark:bg-[#121316]/90 backdrop-blur-xl border border-[#E2E0DB] dark:border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)] rounded-3xl">
+              <h3 className="font-display font-extrabold text-lg text-[#1C1917] dark:text-white mb-3">Skills & Technologies</h3>
               {allSkills.length === 0 ? (
-                <p className="text-xs text-gray-400">No skills listed yet.</p>
+                <p className="text-xs text-zinc-400">No skills listed yet.</p>
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {allSkills.map((skill) => (
-                    <span key={skill} className="text-xs font-bold px-3 py-1 rounded-full bg-gray-100/90 text-gray-700 border border-gray-200/60">
+                    <span key={skill} className="text-xs font-bold px-3 py-1 rounded-full bg-stone-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-[#E2E0DB] dark:border-zinc-700">
                       {skill}
                     </span>
                   ))}
@@ -322,16 +322,16 @@ function ProfileContent() {
             </div>
 
             {/* Quick Metrics */}
-            <div className="glass-card p-6 bg-gradient-to-br from-[#EFF6FF] to-white border border-blue-100 shadow-sm rounded-3xl text-[#111827]">
-              <h3 className="font-display font-extrabold text-lg mb-4 text-blue-950">Contribution Snapshot</h3>
+            <div className="glass-card p-6 bg-gradient-to-br from-[#EFF6FF] to-white dark:from-[#131722] dark:to-[#121316] border border-blue-100 dark:border-white/10 shadow-xs rounded-3xl text-[#1C1917] dark:text-zinc-100">
+              <h3 className="font-display font-extrabold text-lg mb-4 text-blue-950 dark:text-blue-200">Contribution Snapshot</h3>
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-white p-3.5 rounded-2xl border border-blue-100 shadow-xs">
-                  <span className="text-xs font-medium text-gray-500 block">Total Repos</span>
-                  <span className="font-display font-extrabold text-2xl text-[#111827]">{repos.length}</span>
+                <div className="bg-white dark:bg-[#18191E] p-3.5 rounded-2xl border border-blue-100 dark:border-zinc-800 shadow-xs">
+                  <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400 block">Total Repos</span>
+                  <span className="font-display font-extrabold text-2xl text-[#1C1917] dark:text-white">{repos.length}</span>
                 </div>
-                <div className="bg-white p-3.5 rounded-2xl border border-blue-100 shadow-xs">
-                  <span className="text-xs font-medium text-gray-500 block">Activities</span>
-                  <span className="font-display font-extrabold text-2xl text-[#111827]">{activities.length}</span>
+                <div className="bg-white dark:bg-[#18191E] p-3.5 rounded-2xl border border-blue-100 dark:border-zinc-800 shadow-xs">
+                  <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400 block">Activities</span>
+                  <span className="font-display font-extrabold text-2xl text-[#1C1917] dark:text-white">{activities.length}</span>
                 </div>
               </div>
             </div>
@@ -340,10 +340,10 @@ function ProfileContent() {
           {/* Right Column (8 cols): Contribution Graph & Projects */}
           <div className="lg:col-span-8 space-y-8">
             {/* Real Contribution Heatmap */}
-            <div className="glass-card p-6 bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_12px_32px_rgba(0,0,0,0.04)] rounded-3xl">
+            <div className="glass-card p-6 bg-white/85 dark:bg-[#121316]/90 backdrop-blur-xl border border-[#E2E0DB] dark:border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)] rounded-3xl">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-display font-extrabold text-lg text-[#111827]">Annual Contributions</h3>
-                <span className="text-xs font-bold text-gray-400">{selectedYear}</span>
+                <h3 className="font-display font-extrabold text-lg text-[#1C1917] dark:text-white">Annual Contributions</h3>
+                <span className="text-xs font-bold text-zinc-400 dark:text-zinc-500">{selectedYear}</span>
               </div>
               <div className="overflow-x-auto">
                 <ContributionGraph
@@ -357,10 +357,10 @@ function ProfileContent() {
 
             {/* User Projects List */}
             <div>
-              <h3 className="font-display font-extrabold text-2xl text-[#111827] mb-4">Projects</h3>
+              <h3 className="font-display font-extrabold text-2xl text-[#1C1917] dark:text-white mb-4">Projects</h3>
               {repos.length === 0 ? (
                 <EmptyState
-                  icon={<FolderGit2 className="w-8 h-8 text-[#EA384C]" />}
+                  icon={<FolderGit2 className="w-8 h-8 text-[#B7194B]" />}
                   title="No projects yet"
                   description="This developer has not created any repositories yet."
                 />
@@ -384,7 +384,7 @@ function ProfileContent() {
 export default function ProfilePage() {
   return (
     <ProtectedRoute>
-      <React.Suspense fallback={<div className="min-h-screen bg-[#FAFAFA]" />}>
+      <React.Suspense fallback={<div className="min-h-screen bg-[#F4F2EF] dark:bg-[#090909]" />}>
         <ProfileContent />
       </React.Suspense>
     </ProtectedRoute>

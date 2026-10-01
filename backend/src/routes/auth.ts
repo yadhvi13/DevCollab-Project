@@ -113,10 +113,13 @@ router.post('/forgot-password', async (req, res) => {
     user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour expiry
     await user.save();
 
-    // Send email
-    await sendResetPasswordEmail(user.email, token);
+    // Send email via mailer
+    const resetUrl = await sendResetPasswordEmail(user.email, token);
 
-    res.status(200).json({ message: 'If this email is registered, a password reset link has been sent.' });
+    res.status(200).json({ 
+      message: `Password reset email sent to ${user.email}. Check your inbox or click the link below.`,
+      resetUrl: process.env.NODE_ENV !== 'production' ? resetUrl : undefined
+    });
   } catch (error) {
     console.error('Forgot password error:', error);
     res.status(500).json({ error: 'Server error during forgot password' });

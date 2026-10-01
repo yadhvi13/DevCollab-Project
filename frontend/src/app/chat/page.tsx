@@ -123,28 +123,28 @@ function GlobalChat() {
   const channelObj = CHANNELS.find(c => c.id === activeChannel);
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] text-[#111827] font-sans flex flex-col">
+    <div className="min-h-screen bg-[#F4F2EF] dark:bg-[#090909] text-[#1C1917] dark:text-zinc-100 font-sans flex flex-col transition-colors duration-200">
       <Navbar />
       
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col md:flex-row gap-4 md:gap-6 h-[calc(100vh-80px)] overflow-hidden">
         {/* Sidebar Channels */}
-        <div className="w-full md:w-64 glass-card p-4 bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_12px_32px_rgba(0,0,0,0.04)] rounded-3xl flex flex-col overflow-hidden shrink-0">
-           <div className="pb-3 mb-2 border-b border-gray-100 hidden md:block">
-             <h2 className="text-[#111827] font-display font-extrabold flex items-center gap-2 text-base">
-               <MessageSquare className="w-5 h-5 text-[#EA384C]" /> DevCollab Lounge
+        <div className="w-full md:w-64 glass-card p-4 bg-white/85 dark:bg-[#121316]/90 backdrop-blur-xl border border-[#E2E0DB] dark:border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)] rounded-3xl flex flex-col overflow-hidden shrink-0">
+           <div className="pb-3 mb-2 border-b border-gray-100 dark:border-zinc-800 hidden md:block">
+             <h2 className="text-[#1C1917] dark:text-white font-display font-extrabold flex items-center gap-2 text-base">
+               <MessageSquare className="w-5 h-5 text-[#B7194B]" /> DevCollab Lounge
              </h2>
-             <span className="text-[11px] text-gray-400 font-medium">Live Socket.io Community</span>
+             <span className="text-[11px] text-zinc-400 dark:text-zinc-500 font-medium">Live Socket.io Community</span>
            </div>
            <div className="flex md:flex-col overflow-x-auto md:overflow-y-auto gap-1.5 no-scrollbar items-center md:items-stretch py-1">
-              <div className="hidden md:block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-2">Channels</div>
+              <div className="hidden md:block text-[11px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-2 px-2">Channels</div>
               {CHANNELS.map(channel => (
                 <button
                   key={channel.id}
                   onClick={() => setActiveChannel(channel.id)}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                     activeChannel === channel.id 
-                      ? 'bg-[#EA384C] text-white shadow-[0_4px_12px_rgba(234,56,76,0.3)]' 
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-[#111827]'
+                      ? 'bg-[#B7194B] text-white shadow-[0_4px_12px_rgba(183,25,75,0.3)]' 
+                      : 'text-zinc-600 dark:text-zinc-400 hover:bg-stone-100 dark:hover:bg-zinc-800 hover:text-[#1C1917] dark:hover:text-white'
                   }`}
                 >
                   <Hash className="w-4 h-4" /> {channel.name}
@@ -154,16 +154,16 @@ function GlobalChat() {
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 glass-card bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_16px_36px_rgba(0,0,0,0.04)] rounded-3xl flex flex-col overflow-hidden relative">
+        <div className="flex-1 glass-card bg-white/85 dark:bg-[#121316]/90 backdrop-blur-xl border border-[#E2E0DB] dark:border-white/10 shadow-[0_16px_36px_rgba(0,0,0,0.04)] dark:shadow-[0_16px_36px_rgba(0,0,0,0.4)] rounded-3xl flex flex-col overflow-hidden relative">
            
-           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white/60 backdrop-blur-md z-10">
+           <div className="px-6 py-4 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between bg-white/60 dark:bg-[#121316]/60 backdrop-blur-md z-10">
               <div>
-                <h2 className="text-[#111827] font-display font-extrabold flex items-center gap-2 text-lg">
-                  <Hash className="w-5 h-5 text-[#EA384C]" /> {channelObj?.name}
+                <h2 className="text-[#1C1917] dark:text-white font-display font-extrabold flex items-center gap-2 text-lg">
+                  <Hash className="w-5 h-5 text-[#B7194B]" /> {channelObj?.name}
                 </h2>
-                <p className="text-xs text-gray-400 font-medium">{channelObj?.desc}</p>
+                <p className="text-xs text-zinc-400 dark:text-zinc-500 font-medium">{channelObj?.desc}</p>
               </div>
-              <div className="flex items-center gap-2 text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200/60">
+              <div className="flex items-center gap-2 text-xs font-bold text-zinc-500 dark:text-zinc-400 bg-gray-50 dark:bg-zinc-800 px-3 py-1.5 rounded-full border border-gray-200/60 dark:border-zinc-700">
                 <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
                 <span>{onlineUsers?.length || 1} Online</span>
               </div>
@@ -171,12 +171,12 @@ function GlobalChat() {
            
            <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {messages.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-gray-400">
-                   <div className="w-16 h-16 rounded-3xl bg-red-50 flex items-center justify-center mb-4 text-[#EA384C]">
+                <div className="h-full flex flex-col items-center justify-center text-zinc-400">
+                   <div className="w-16 h-16 rounded-3xl bg-rose-50 dark:bg-[#B7194B]/15 flex items-center justify-center mb-4 text-[#B7194B]">
                      <Hash className="w-8 h-8" />
                    </div>
-                   <h3 className="text-[#111827] font-display font-extrabold text-xl mb-1">Welcome to #{channelObj?.name}!</h3>
-                   <p className="text-xs text-center max-w-sm text-gray-500">This is the start of the #{channelObj?.name} channel. Say hi and start collaborating!</p>
+                   <h3 className="text-[#1C1917] dark:text-white font-display font-extrabold text-xl mb-1">Welcome to #{channelObj?.name}!</h3>
+                   <p className="text-xs text-center max-w-sm text-zinc-500 dark:text-zinc-400">This is the start of the #{channelObj?.name} channel. Say hi and start collaborating!</p>
                 </div>
               ) : (
                 messages.map((msg, i) => (
@@ -185,7 +185,7 @@ function GlobalChat() {
                     className="flex gap-4 group relative"
                   >
                      <div className="relative shrink-0 mt-1">
-                       <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#FFB800] to-[#FFE072] flex items-center justify-center text-[#111827] font-extrabold overflow-hidden border border-white shadow-xs">
+                       <div className="w-10 h-10 rounded-2xl bg-[#B7194B] flex items-center justify-center text-white font-extrabold overflow-hidden border border-white/20 shadow-xs">
                           {msg.user.avatar ? (
                             <img src={msg.user.avatar} alt="Avatar" className="w-full h-full object-cover" />
                           ) : (
@@ -193,31 +193,31 @@ function GlobalChat() {
                           )}
                        </div>
                        {(onlineUsers?.includes(msg.user._id) || onlineUsers?.includes(msg.user.id)) && (
-                         <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#10B981] border-2 border-white rounded-full z-10" />
+                         <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#10B981] border-2 border-white dark:border-zinc-900 rounded-full z-10" />
                        )}
                      </div>
                      <div className="flex-1">
                        <div className="flex items-baseline gap-2 mb-1">
-                         <span className="font-bold text-[#111827] text-sm">{msg.user.username}</span>
-                         <span className="text-[10px] text-gray-400 font-medium">
+                         <span className="font-bold text-[#1C1917] dark:text-white text-sm">{msg.user.username}</span>
+                         <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-medium">
                             {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </span>
                        </div>
                        
                        {msg.replyTo && (
-                         <div className="mb-2 pl-3 border-l-2 border-[#EA384C] text-xs text-gray-500 bg-red-50/50 py-1.5 pr-3 rounded-r-xl max-w-md">
-                           <span className="font-bold text-[#EA384C]">@{msg.replyTo.username}</span>: {msg.replyTo.message}
+                         <div className="mb-2 pl-3 border-l-2 border-[#B7194B] text-xs text-zinc-600 dark:text-zinc-300 bg-rose-50/50 dark:bg-[#B7194B]/10 py-1.5 pr-3 rounded-r-xl max-w-md">
+                           <span className="font-bold text-[#B7194B]">@{msg.replyTo.username}</span>: {msg.replyTo.message}
                          </div>
                        )}
                        
-                       <p className="text-gray-700 text-xs sm:text-sm leading-relaxed">{msg.message}</p>
+                       <p className="text-zinc-700 dark:text-zinc-200 text-xs sm:text-sm leading-relaxed">{msg.message}</p>
                      </div>
                      
                      <div className="absolute right-0 top-2 opacity-0 group-hover:opacity-100 flex items-center gap-1">
                        {(msg.user._id === user?._id || msg.user.id === user?._id) && (
                          <button 
                            onClick={() => handleDelete(msg.id)}
-                           className="p-1.5 bg-red-50 rounded-lg text-[#EA384C] hover:bg-red-100 transition-all cursor-pointer border border-red-200/60"
+                           className="p-1.5 bg-rose-50 dark:bg-[#B7194B]/20 rounded-lg text-[#B7194B] hover:bg-rose-100 dark:hover:bg-[#B7194B]/30 transition-all cursor-pointer border border-rose-200/60 dark:border-[#B7194B]/30"
                            title="Delete message"
                          >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -225,7 +225,7 @@ function GlobalChat() {
                        )}
                        <button 
                          onClick={() => setReplyingTo(msg)}
-                         className="p-1.5 bg-gray-100 rounded-lg text-gray-600 hover:text-[#111827] hover:bg-gray-200 transition-all cursor-pointer"
+                         className="p-1.5 bg-stone-100 dark:bg-zinc-800 rounded-lg text-zinc-600 dark:text-zinc-300 hover:text-[#1C1917] dark:hover:text-white hover:bg-stone-200 dark:hover:bg-zinc-700 transition-all cursor-pointer"
                          title="Reply"
                        >
                           <Reply className="w-3.5 h-3.5" />
@@ -237,14 +237,14 @@ function GlobalChat() {
               <div ref={messagesEndRef} />
            </div>
            
-           <div className="p-4 bg-white/60 border-t border-gray-100 flex flex-col gap-2 z-10">
+           <div className="p-4 bg-white/60 dark:bg-[#121316]/60 border-t border-gray-100 dark:border-zinc-800 flex flex-col gap-2 z-10">
               {replyingTo && (
-                <div className="flex items-center justify-between bg-gray-50 border border-gray-200/80 rounded-xl px-3.5 py-1.5 text-xs">
-                  <div className="flex items-center gap-2 text-gray-500">
-                    <Reply className="w-3.5 h-3.5 text-[#EA384C]" />
-                    Replying to <span className="font-bold text-[#111827]">@{replyingTo.user.username}</span>
+                <div className="flex items-center justify-between bg-gray-50 dark:bg-[#18191E] border border-gray-200/80 dark:border-zinc-800 rounded-xl px-3.5 py-1.5 text-xs">
+                  <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400">
+                    <Reply className="w-3.5 h-3.5 text-[#B7194B]" />
+                    Replying to <span className="font-bold text-[#1C1917] dark:text-white">@{replyingTo.user.username}</span>
                   </div>
-                  <button onClick={() => setReplyingTo(null)} className="text-gray-400 hover:text-[#111827] cursor-pointer">
+                  <button onClick={() => setReplyingTo(null)} className="text-zinc-400 hover:text-[#1C1917] dark:hover:text-white cursor-pointer">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -255,12 +255,12 @@ function GlobalChat() {
                    value={messageInput}
                    onChange={e => setMessageInput(e.target.value)}
                    placeholder={`Message #${channelObj?.name}`}
-                   className="w-full bg-gray-50 border border-gray-200/80 rounded-full py-2.5 pl-4 pr-12 text-xs sm:text-sm text-[#111827] focus:outline-none focus:border-[#EA384C] focus:bg-white focus:ring-2 focus:ring-[#EA384C]/15 transition-all"
+                   className="w-full bg-gray-50 dark:bg-[#18191E] border border-gray-200/80 dark:border-zinc-800 rounded-full py-2.5 pl-4 pr-12 text-xs sm:text-sm text-[#1C1917] dark:text-zinc-100 focus:outline-none focus:border-[#B7194B] focus:bg-white dark:focus:bg-[#121316] focus:ring-2 focus:ring-[#B7194B]/15 transition-all placeholder:text-zinc-400"
                  />
                  <button 
                    type="submit" 
                    disabled={!messageInput.trim()}
-                   className="absolute right-1.5 p-2 bg-[#EA384C] hover:bg-[#D3283C] disabled:opacity-40 text-white rounded-full transition-all cursor-pointer shadow-sm"
+                   className="absolute right-1.5 p-2 bg-[#B7194B] hover:bg-[#c92055] disabled:opacity-40 text-white rounded-full transition-all cursor-pointer shadow-xs"
                  >
                    <Send className="w-3.5 h-3.5" />
                  </button>
