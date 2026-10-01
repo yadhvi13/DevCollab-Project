@@ -1,6 +1,6 @@
 import express from 'express';
 import User from '../models/User';
-import { authenticate } from './auth';
+import { authenticate, optionalAuthenticate } from './auth';
 import Activity from '../models/Activity';
 
 const router = express.Router();
@@ -110,33 +110,52 @@ router.put('/profile', authenticate, async (req: any, res) => {
   }
 });
 
-// Get user profile by username
-router.get('/:username', authenticate, async (req, res) => {
-    try {
-      const user = await User.findOne({ username: req.params.username });
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
+// Get all registered developers for Developer Directory / Showcase
+router.get('/', async (req, res) => {
+  try {
+    const users = await User.find({})
+      .select('-password -resetPasswordToken -resetPasswordExpires')
+      .sort({ xp: -1, createdAt: -1 })
+      .limit(50);
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch developers' });
+  }
+});
 
+// Get user profile by username
+router.get('/:username', optionalAuthenticate, async (req, res) => {
+  try {
+    const username = req.params.username;
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    try {
       const stats = await calculateGamification(user._id.toString());
       user.xp = stats.xp;
       user.level = stats.level;
       user.streak = stats.streak;
       await user.save();
-
-      const userObj = user.toObject();
-      delete userObj.password;
-
-      res.json(userObj);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch user' });
+    } catch (saveErr) {
+      console.warn('Could not update user gamification stats on fetch:', saveErr);
     }
+
+    const userObj = user.toObject();
+    delete userObj.password;
+
+    res.json(userObj);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch user' });
+  }
 });
 
 // Get user activities (Contributions)
-router.get('/:username/activities', authenticate, async (req, res) => {
+router.get('/:username/activities', optionalAuthenticate, async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.params.username });
+    const username = req.params.username;
+    const user = await User.findOne({ username });
     if (!user) return res.status(404).json({ error: 'User not found' });
 
     // Determine the available years

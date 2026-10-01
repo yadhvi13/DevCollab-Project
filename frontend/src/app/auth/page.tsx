@@ -1,17 +1,13 @@
 "use client";
 
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
-import { Mail, Lock, User as UserIcon, ArrowRight, Code2, Sparkles } from 'lucide-react';
-import Particles, { ParticlesProvider } from "@tsparticles/react";
-import { loadSlim } from "@tsparticles/slim";
-import type { Engine } from "@tsparticles/engine";
+import { Mail, Lock, User as UserIcon, ArrowRight, Terminal } from 'lucide-react';
 import { API_BASE_URL } from '@/config';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Squiggle, SparkleStar } from '@/components/ui/DecorativeShapes';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -25,14 +21,6 @@ export default function AuthPage() {
   
   const { login } = useAuth();
   const router = useRouter();
-
-  const particlesInit = useCallback(async (engine: Engine) => {
-    try {
-      await loadSlim(engine);
-    } catch (error) {
-      console.warn("Particles engine failed to load slim:", error);
-    }
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +70,7 @@ export default function AuthPage() {
       }
 
       login(data.token, data.user);
-      router.push('/');
+      router.push('/dashboard');
     } catch (err) {
       setError('An error occurred. Please try again.');
       setIsLoading(false);
@@ -90,225 +78,174 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center overflow-y-auto bg-transparent py-8 sm:py-12">
-      {/* Animated Particles Background */}
-      <ParticlesProvider init={particlesInit}>
-        <Particles
-          id="tsparticles"
-          options={{
-            background: { color: { value: "transparent" } },
-            fpsLimit: 60,
-            interactivity: {
-              events: {
-                onHover: { enable: true, mode: "grab" },
-                onClick: { enable: true, mode: "push" },
-              },
-              modes: {
-                grab: { distance: 150, links: { opacity: 0.3 } },
-                push: { quantity: 4 },
-              },
-            },
-            particles: {
-              color: { value: ["#e79e6b", "#d97706", "#f59e0b"] },
-              links: { color: "#e79e6b", distance: 150, enable: true, opacity: 0.1, width: 1 },
-              move: { enable: true, speed: 0.8, direction: "none", outModes: { default: "bounce" } },
-              number: { density: { enable: true, width: 800 }, value: 80 },
-              opacity: { value: 0.5 },
-              shape: { type: "circle" },
-              size: { value: { min: 1, max: 3 } },
-            },
-            detectRetina: true,
-          }}
-          className="absolute inset-0 z-0 pointer-events-auto"
-        />
-      </ParticlesProvider>
+    <div className="min-h-screen bg-[#FAFAFA] text-[#111827] flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans">
+      
+      {/* Decorative soft atmospheric glows */}
+      <div className="absolute top-1/4 -left-20 w-80 h-80 bg-[#FFB800]/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-[#EA384C]/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Decorative Orbs */}
-      <div className="absolute top-1/10 -left-32 w-[500px] h-[500px] bg-gradient-to-tr from-indigo-600/20 to-purple-600/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-1/10 -right-32 w-[500px] h-[500px] bg-gradient-to-br from-pink-600/20 to-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
+      {/* Brand Header */}
+      <Link href="/" className="flex items-center gap-2.5 mb-8 group select-none">
+        <div className="w-11 h-11 rounded-2xl bg-[#EA384C] flex items-center justify-center shadow-[0_8px_20px_rgba(234,56,76,0.35)] group-hover:scale-105 transition-transform">
+          <Terminal className="w-5 h-5 text-white" />
+        </div>
+        <div className="flex flex-col">
+          <span className="font-display font-extrabold text-2xl text-[#111827] tracking-tight leading-none">
+            Dev<span className="text-[#EA384C]">Collab</span>
+          </span>
+          <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase font-mono mt-1">
+            Builder Network
+          </span>
+        </div>
+      </Link>
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.96, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-[420px] z-10 p-4"
+        transition={{ duration: 0.3 }}
+        className="w-full max-w-md glass-card p-6 sm:p-8 bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_20px_50px_rgba(0,0,0,0.06)] rounded-3xl relative"
       >
-        <Card className="relative bg-[#0F172A]/40 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden group shadow-[0_20px_50px_rgba(0,0,0,0.3)] p-2">
-          {/* Subtle animated border glow */}
-          <motion.div 
-            animate={{ opacity: [0.4, 0.8, 0.4] }}
-            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-            className="absolute -inset-0.5 bg-gradient-to-br from-indigo-500/40 via-purple-500/40 to-pink-500/40 rounded-3xl -z-10 blur-xl transition-opacity duration-500" 
-          />
-          
-          <CardHeader className="text-center pt-8 pb-4">
-            <div className="flex justify-center mb-6 relative">
-               <motion.div 
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                  className="relative"
-               >
-                  <div className="absolute inset-0 bg-indigo-500/40 blur-xl rounded-full" />
-                  <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-4 rounded-2xl border border-white/20 shadow-[0_0_25px_rgba(99,102,241,0.5)] relative z-10">
-                     <Code2 className="text-white w-8 h-8" />
-                  </div>
-                  <Sparkles className="absolute -top-2 -right-4 w-5 h-5 text-pink-400 animate-pulse" />
-               </motion.div>
-            </div>
+        <div className="text-center mb-6">
+          <h1 className="font-display font-extrabold text-3xl text-[#111827] tracking-tight">
+            {isForgotPassword 
+              ? 'Reset Password' 
+              : isLogin 
+                ? 'Welcome Back' 
+                : 'Join DevCollab'}
+          </h1>
+          <p className="font-sans text-xs text-gray-500 mt-1 font-normal">
+            {isForgotPassword
+              ? 'Enter your email to receive recovery instructions'
+              : isLogin
+                ? 'Sign in to access your repositories and live lounge'
+                : 'Create your developer profile and start collaborating'}
+          </p>
+        </div>
 
-            <CardTitle className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-100 to-purple-300 tracking-tight font-sans uppercase">
-              {isForgotPassword 
-                ? 'Reset password' 
-                : (isLogin ? 'Welcome back' : 'Join DevCollab')}
-            </CardTitle>
-            <CardDescription className="text-slate-400 text-sm font-medium mt-2 font-sans">
-              {isForgotPassword 
-                ? 'Enter your email to receive a password reset link' 
-                : (isLogin ? 'Sign in to access your workspaces' : 'Create an account to start collaborating')}
-            </CardDescription>
-          </CardHeader>
+        {error && (
+          <div className="mb-4 p-3.5 rounded-2xl bg-red-50 border border-red-200 text-xs font-bold text-[#EA384C]">
+            {error}
+          </div>
+        )}
 
-          <CardContent className="space-y-6">
-            <AnimatePresence mode="wait">
-              {error && (
-                <motion.div 
-                  initial={{ opacity: 0, height: 0 }} 
-                  animate={{ opacity: 1, height: 'auto' }} 
-                  exit={{ opacity: 0, height: 0 }}
-                  className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm flex items-center gap-2 font-sans"
-                  key="error-alert"
-                >
-                  <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping" />
-                  {error}
-                </motion.div>
-              )}
-              {message && (
-                <motion.div 
-                  initial={{ opacity: 0, height: 0 }} 
-                  animate={{ opacity: 1, height: 'auto' }} 
-                  exit={{ opacity: 0, height: 0 }}
-                  className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-4 py-3 rounded-xl text-sm flex items-center gap-2 font-sans"
-                  key="message-alert"
-                >
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  {message}
-                </motion.div>
-              )}
-            </AnimatePresence>
+        {message && (
+          <div className="mb-4 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-[#10B981]">
+            {message}
+          </div>
+        )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <AnimatePresence mode="popLayout">
-                {!isLogin && !isForgotPassword && (
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    transition={{ duration: 0.2 }}
-                    key="username-input"
-                  >
-                    <div className="relative group">
-                      <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-400 transition-colors z-10" />
-                      <Input 
-                        type="text"
-                        value={username}
-                        onChange={e => setUsername(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl py-6 pl-12 pr-4 text-white placeholder-slate-400 focus-visible:border-indigo-500/50 focus-visible:ring-indigo-500/25 transition-all duration-300 font-sans"
-                        placeholder="Username"
-                        required
-                      />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              
-              <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-400 transition-colors z-10" />
-                <Input 
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-6 pl-12 pr-4 text-white placeholder-slate-400 focus-visible:border-indigo-500/50 focus-visible:ring-indigo-500/25 transition-all duration-300 font-sans"
-                  placeholder="Email address"
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {!isLogin && !isForgotPassword && (
+            <div>
+              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                Username
+              </label>
+              <div className="relative">
+                <UserIcon className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
                   required
+                  placeholder="e.g. dev_coder"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full text-xs py-2.5 pl-10 pr-3.5 bg-gray-50/80 border border-gray-200/80 rounded-2xl focus:outline-none focus:border-[#EA384C] focus:bg-white focus:ring-2 focus:ring-[#EA384C]/15 transition-all text-[#111827]"
                 />
               </div>
+            </div>
+          )}
 
-              {!isForgotPassword && (
-                <div className="relative group">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-400 transition-colors z-10" />
-                  <Input 
-                    type="password"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl py-6 pl-12 pr-4 text-white placeholder-slate-400 focus-visible:border-indigo-500/50 focus-visible:ring-indigo-500/25 transition-all duration-300 font-sans"
-                    placeholder="Password"
-                    required
-                  />
-                </div>
-              )}
+          <div>
+            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+              Email Address
+            </label>
+            <div className="relative">
+              <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="email"
+                required
+                placeholder="name@domain.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full text-xs py-2.5 pl-10 pr-3.5 bg-gray-50/80 border border-gray-200/80 rounded-2xl focus:outline-none focus:border-[#EA384C] focus:bg-white focus:ring-2 focus:ring-[#EA384C]/15 transition-all text-[#111827]"
+              />
+            </div>
+          </div>
 
-              {isLogin && !isForgotPassword && (
-                <div className="text-right">
+          {!isForgotPassword && (
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                  Password
+                </label>
+                {isLogin && (
                   <button
                     type="button"
-                    onClick={() => {
-                      setIsForgotPassword(true);
-                      setError('');
-                      setMessage('');
-                    }}
-                    className="text-slate-400 hover:text-indigo-400 focus:text-indigo-400 transition-colors text-xs font-semibold cursor-pointer focus:outline-none font-sans"
+                    onClick={() => setIsForgotPassword(true)}
+                    className="text-[11px] font-bold text-gray-400 hover:text-[#EA384C] underline cursor-pointer"
                   >
-                    Forgot Password?
+                    Forgot password?
                   </button>
-                </div>
-              )}
-
-              <Button 
-                type="submit" 
-                disabled={isLoading}
-                className="w-full bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:opacity-90 text-white font-bold py-6 rounded-full transition-all shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(236,72,153,0.6)] active:scale-95 flex items-center justify-center gap-2 cursor-pointer border-none font-sans"
-              >
-                <span>
-                  {isLoading 
-                    ? (isForgotPassword ? 'Sending Link...' : 'Authenticating...') 
-                    : (isForgotPassword ? 'Send Reset Link' : (isLogin ? 'Sign In' : 'Create Account'))}
-                </span>
-                {!isLoading && <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />}
-              </Button>
-            </form>
-
-            <div className="text-center pt-2 font-sans">
-              {isForgotPassword ? (
-                <button 
-                  onClick={() => {
-                    setIsForgotPassword(false);
-                    setError('');
-                    setMessage('');
-                  }}
-                  className="text-indigo-400 hover:text-indigo-300 active:text-indigo-500 font-bold transition-colors text-sm cursor-pointer bg-transparent border-none"
-                >
-                  Back to Sign In
-                </button>
-              ) : (
-                <>
-                  <span className="text-slate-500 text-sm font-medium">
-                    {isLogin ? "New to DevCollab?" : "Already have an account?"}
-                  </span>
-                  <button 
-                    onClick={() => {
-                      setIsLogin(!isLogin);
-                      setError('');
-                      setMessage('');
-                    }}
-                    className="ml-2 text-indigo-400 hover:text-indigo-300 active:text-indigo-500 font-bold transition-colors text-sm cursor-pointer bg-transparent border-none"
-                  >
-                    {isLogin ? 'Create an account' : 'Sign in instead'}
-                  </button>
-                </>
-              )}
+                )}
+              </div>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="password"
+                  required
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full text-xs py-2.5 pl-10 pr-3.5 bg-gray-50/80 border border-gray-200/80 rounded-2xl focus:outline-none focus:border-[#EA384C] focus:bg-white focus:ring-2 focus:ring-[#EA384C]/15 transition-all text-[#111827]"
+                />
+              </div>
             </div>
-          </CardContent>
-        </Card>
+          )}
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="btn-pill-red w-full py-3 text-sm font-bold cursor-pointer mt-2 disabled:opacity-50 shadow-[0_10px_25px_rgba(234,56,76,0.35)]"
+          >
+            {isLoading 
+              ? 'Please wait...' 
+              : isForgotPassword 
+                ? 'Send Reset Link' 
+                : isLogin 
+                  ? 'Sign In →' 
+                  : 'Create Account →'}
+          </button>
+        </form>
+
+        <div className="mt-6 pt-5 border-t border-gray-100 text-center text-xs font-medium text-gray-500">
+          {isForgotPassword ? (
+            <button
+              onClick={() => setIsForgotPassword(false)}
+              className="text-[#111827] hover:underline font-bold cursor-pointer"
+            >
+              ← Back to Sign In
+            </button>
+          ) : isLogin ? (
+            <p>
+              Don't have an account?{' '}
+              <button
+                onClick={() => setIsLogin(false)}
+                className="text-[#EA384C] hover:underline font-bold cursor-pointer"
+              >
+                Sign Up
+              </button>
+            </p>
+          ) : (
+            <p>
+              Already registered?{' '}
+              <button
+                onClick={() => setIsLogin(true)}
+                className="text-[#EA384C] hover:underline font-bold cursor-pointer"
+              >
+                Sign In
+              </button>
+            </p>
+          )}
+        </div>
       </motion.div>
     </div>
   );

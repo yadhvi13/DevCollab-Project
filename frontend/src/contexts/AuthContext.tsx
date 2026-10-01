@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { API_BASE_URL } from '../config';
 
 interface User {
@@ -26,9 +26,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const logout = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+    }
+    setToken(null);
+    setUser(null);
+    setLoading(false);
+  }, []);
+
+  const login = useCallback((newToken: string, newUser: User) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('token', newToken);
+    }
+    setToken(newToken);
+    setUser(newUser);
+    setLoading(false);
+  }, []);
+
   useEffect(() => {
     // Client-side initialization
-    const savedToken = localStorage.getItem('token');
+    const savedToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     if (savedToken) {
       setToken(savedToken);
     } else {
@@ -57,20 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .catch(() => logout())
       .finally(() => setLoading(false));
     }
-  }, [token, user]);
-
-  const login = (newToken: string, newUser: User) => {
-    localStorage.setItem('token', newToken);
-    setToken(newToken);
-    setUser(newUser);
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-    setUser(null);
-    setLoading(false);
-  };
+  }, [token, user, logout]);
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout, loading }}>

@@ -1,6 +1,6 @@
 import express from 'express';
 import Repository from '../models/Repository';
-import { authenticate } from './auth';
+import { authenticate, optionalAuthenticate } from './auth';
 import Activity from '../models/Activity';
 import fs from 'fs';
 import path from 'path';
@@ -10,17 +10,30 @@ import { exec } from 'child_process';
 const router = express.Router();
 
 // Get repos (supports personal or public/explore)
-router.get('/', authenticate, async (req: any, res) => {
+router.get('/', async (req: any, res) => {
   try {
     const { type } = req.query;
     
     let query: any = {};
     
     if (type === 'public') {
-      // Explore page: all public repos
+      // Explore page & Landing page: all public repos
       query = { isPrivate: false };
     } else {
-      // Dashboard: only repos where user is owner or collaborator
+      // Personal repos: requires authentication
+      const authHeader = req.header('Authorization');
+      const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : authHeader;
+      if (!token) {
+        return res.status(401).json({ error: 'Access denied' });
+      }
+      try {
+        const jwt = require('jsonwebtoken');
+        const decoded: any = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+        req.user = decoded;
+      } catch (err) {
+        return res.status(401).json({ error: 'Invalid token' });
+      }
+
       query = {
         $or: [
           { owner: req.user.userId },
@@ -188,7 +201,7 @@ router.post('/import', authenticate, async (req: any, res) => {
 });
 
 // Get a single repository by ID
-router.get('/:id', authenticate, async (req: any, res) => {
+router.get('/:id', optionalAuthenticate, async (req: any, res) => {
   try {
     const repo = await Repository.findById(req.params.id)
       .populate('owner', 'username avatar')
@@ -197,9 +210,12 @@ router.get('/:id', authenticate, async (req: any, res) => {
     if (!repo) return res.status(404).json({ error: 'Repository not found' });
     
     // Check access
-    if (repo.isPrivate && 
-        repo.owner._id.toString() !== req.user.userId && 
-        !repo.collaborators.some((c: any) => c._id.toString() === req.user.userId)) {
+    const userId = req.user?.userId;
+    const ownerId = (repo.owner?._id || repo.owner)?.toString();
+    const isOwner = Boolean(userId && ownerId === userId);
+    const isCollab = Boolean(userId && repo.collaborators?.some((c: any) => (c?._id || c)?.toString() === userId));
+
+    if (repo.isPrivate && !isOwner && !isCollab) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
@@ -285,7 +301,10 @@ router.delete('/:id/files', authenticate, async (req: any, res) => {
     if (!repo) return res.status(404).json({ error: 'Repository not found' });
     
     // Check access
-    if (repo.owner._id.toString() !== req.user.userId && !repo.collaborators.includes(req.user.userId)) {
+    const ownerId = (repo.owner?._id || repo.owner)?.toString();
+    const isOwner = ownerId === req.user.userId;
+    const isCollab = repo.collaborators?.some((c: any) => (c?._id || c)?.toString() === req.user.userId);
+    if (!isOwner && !isCollab) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
@@ -327,7 +346,8 @@ router.delete('/:id', authenticate, async (req: any, res) => {
     const repo = await Repository.findById(req.params.id);
     if (!repo) return res.status(404).json({ error: 'Repository not found' });
 
-    if (repo.owner._id.toString() !== req.user.userId) {
+    const ownerId = (repo.owner?._id || repo.owner)?.toString();
+    if (ownerId !== req.user.userId) {
       return res.status(403).json({ error: 'Only the owner can delete the repository' });
     }
 

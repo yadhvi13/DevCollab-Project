@@ -123,27 +123,28 @@ function GlobalChat() {
   const channelObj = CHANNELS.find(c => c.id === activeChannel);
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans flex flex-col">
+    <div className="min-h-screen bg-[#FAFAFA] text-[#111827] font-sans flex flex-col">
       <Navbar />
       
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 flex flex-col md:flex-row gap-4 md:gap-6 h-[calc(100vh-64px)] overflow-hidden">
-        {/* Sidebar */}
-        <div className="w-full md:w-64 bg-card border border-border rounded-xl flex flex-col overflow-hidden shrink-0">
-           <div className="p-4 border-b border-border hidden md:block">
-             <h2 className="text-foreground font-bold flex items-center gap-2">
-               <MessageSquare className="w-5 h-5 text-primary" /> DevCollab Chat
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col md:flex-row gap-4 md:gap-6 h-[calc(100vh-80px)] overflow-hidden">
+        {/* Sidebar Channels */}
+        <div className="w-full md:w-64 glass-card p-4 bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_12px_32px_rgba(0,0,0,0.04)] rounded-3xl flex flex-col overflow-hidden shrink-0">
+           <div className="pb-3 mb-2 border-b border-gray-100 hidden md:block">
+             <h2 className="text-[#111827] font-display font-extrabold flex items-center gap-2 text-base">
+               <MessageSquare className="w-5 h-5 text-[#EA384C]" /> DevCollab Lounge
              </h2>
+             <span className="text-[11px] text-gray-400 font-medium">Live Socket.io Community</span>
            </div>
-           <div className="flex md:flex-col overflow-x-auto md:overflow-y-auto p-3 gap-2 md:gap-1 no-scrollbar items-center md:items-stretch">
-              <div className="hidden md:block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 mt-2 px-2">Channels</div>
+           <div className="flex md:flex-col overflow-x-auto md:overflow-y-auto gap-1.5 no-scrollbar items-center md:items-stretch py-1">
+              <div className="hidden md:block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-2">Channels</div>
               {CHANNELS.map(channel => (
                 <button
                   key={channel.id}
                   onClick={() => setActiveChannel(channel.id)}
-                  className={`flex items-center gap-2 px-4 md:px-3 py-2 rounded-full md:rounded-md text-sm font-medium transition-colors whitespace-nowrap cursor-pointer ${
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                     activeChannel === channel.id 
-                      ? 'bg-primary/10 text-primary border border-primary/20 md:border-transparent' 
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent'
+                      ? 'bg-[#EA384C] text-white shadow-[0_4px_12px_rgba(234,56,76,0.3)]' 
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-[#111827]'
                   }`}
                 >
                   <Hash className="w-4 h-4" /> {channel.name}
@@ -153,28 +154,29 @@ function GlobalChat() {
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 bg-card border border-border rounded-xl flex flex-col overflow-hidden relative">
-           {/* Background glow */}
-           <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 blur-[100px] pointer-events-none rounded-full"></div>
+        <div className="flex-1 glass-card bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_16px_36px_rgba(0,0,0,0.04)] rounded-3xl flex flex-col overflow-hidden relative">
            
-           <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-card/80 backdrop-blur-sm z-10">
+           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white/60 backdrop-blur-md z-10">
               <div>
-                <h2 className="text-foreground font-bold flex items-center gap-2 text-lg">
-                  <Hash className="w-5 h-5 text-muted-foreground" /> {channelObj?.name}
+                <h2 className="text-[#111827] font-display font-extrabold flex items-center gap-2 text-lg">
+                  <Hash className="w-5 h-5 text-[#EA384C]" /> {channelObj?.name}
                 </h2>
-                <p className="text-sm text-muted-foreground">{channelObj?.desc}</p>
+                <p className="text-xs text-gray-400 font-medium">{channelObj?.desc}</p>
               </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Users className="w-4 h-4" /> Online
+              <div className="flex items-center gap-2 text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-200/60">
+                <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
+                <span>{onlineUsers?.length || 1} Online</span>
               </div>
            </div>
            
            <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {messages.length === 0 ? (
-                <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
-                   <Hash className="w-16 h-16 text-border mb-4" />
-                   <h3 className="text-foreground font-bold text-xl mb-2">Welcome to #{channelObj?.name}!</h3>
-                   <p className="text-sm text-center max-w-sm">This is the start of the #{channelObj?.name} channel. Introduce yourself and say hi!</p>
+                <div className="h-full flex flex-col items-center justify-center text-gray-400">
+                   <div className="w-16 h-16 rounded-3xl bg-red-50 flex items-center justify-center mb-4 text-[#EA384C]">
+                     <Hash className="w-8 h-8" />
+                   </div>
+                   <h3 className="text-[#111827] font-display font-extrabold text-xl mb-1">Welcome to #{channelObj?.name}!</h3>
+                   <p className="text-xs text-center max-w-sm text-gray-500">This is the start of the #{channelObj?.name} channel. Say hi and start collaborating!</p>
                 </div>
               ) : (
                 messages.map((msg, i) => (
@@ -183,7 +185,7 @@ function GlobalChat() {
                     className="flex gap-4 group relative"
                   >
                      <div className="relative shrink-0 mt-1">
-                       <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-indigo-500 flex items-center justify-center text-primary-foreground font-bold overflow-hidden">
+                       <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#FFB800] to-[#FFE072] flex items-center justify-center text-[#111827] font-extrabold overflow-hidden border border-white shadow-xs">
                           {msg.user.avatar ? (
                             <img src={msg.user.avatar} alt="Avatar" className="w-full h-full object-cover" />
                           ) : (
@@ -191,42 +193,42 @@ function GlobalChat() {
                           )}
                        </div>
                        {(onlineUsers?.includes(msg.user._id) || onlineUsers?.includes(msg.user.id)) && (
-                         <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-card rounded-full z-10" />
+                         <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#10B981] border-2 border-white rounded-full z-10" />
                        )}
                      </div>
                      <div className="flex-1">
                        <div className="flex items-baseline gap-2 mb-1">
-                         <span className="font-bold text-foreground">{msg.user.username}</span>
-                         <span className="text-xs text-muted-foreground">
-                           {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                         </span>
+                         <span className="font-bold text-[#111827] text-sm">{msg.user.username}</span>
+                         <span className="text-[10px] text-gray-400 font-medium">
+                            {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
                        </div>
                        
                        {msg.replyTo && (
-                         <div className="mb-2 pl-3 border-l-2 border-primary/50 text-xs text-muted-foreground bg-muted py-1.5 pr-3 rounded-r-lg max-w-md">
-                           <span className="font-semibold text-primary">@{msg.replyTo.username}</span>: {msg.replyTo.message}
+                         <div className="mb-2 pl-3 border-l-2 border-[#EA384C] text-xs text-gray-500 bg-red-50/50 py-1.5 pr-3 rounded-r-xl max-w-md">
+                           <span className="font-bold text-[#EA384C]">@{msg.replyTo.username}</span>: {msg.replyTo.message}
                          </div>
                        )}
                        
-                       <p className="text-foreground text-sm leading-relaxed">{msg.message}</p>
+                       <p className="text-gray-700 text-xs sm:text-sm leading-relaxed">{msg.message}</p>
                      </div>
                      
                      <div className="absolute right-0 top-2 opacity-0 group-hover:opacity-100 flex items-center gap-1">
                        {(msg.user._id === user?._id || msg.user.id === user?._id) && (
                          <button 
                            onClick={() => handleDelete(msg.id)}
-                           className="p-2 bg-muted rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all shadow-lg cursor-pointer border border-border"
+                           className="p-1.5 bg-red-50 rounded-lg text-[#EA384C] hover:bg-red-100 transition-all cursor-pointer border border-red-200/60"
                            title="Delete message"
                          >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3.5 h-3.5" />
                          </button>
                        )}
                        <button 
                          onClick={() => setReplyingTo(msg)}
-                         className="p-2 bg-muted rounded-lg text-muted-foreground hover:text-foreground transition-all shadow-lg cursor-pointer border border-border"
+                         className="p-1.5 bg-gray-100 rounded-lg text-gray-600 hover:text-[#111827] hover:bg-gray-200 transition-all cursor-pointer"
                          title="Reply"
                        >
-                          <Reply className="w-4 h-4" />
+                          <Reply className="w-3.5 h-3.5" />
                        </button>
                      </div>
                   </motion.div>
@@ -235,33 +237,33 @@ function GlobalChat() {
               <div ref={messagesEndRef} />
            </div>
            
-           <div className="p-4 bg-card border-t border-border flex flex-col gap-2 z-10">
+           <div className="p-4 bg-white/60 border-t border-gray-100 flex flex-col gap-2 z-10">
               {replyingTo && (
-                <div className="flex items-center justify-between bg-muted border border-border rounded-lg px-4 py-2 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Reply className="w-4 h-4" />
-                    Replying to <span className="font-bold text-foreground">@{replyingTo.user.username}</span>
+                <div className="flex items-center justify-between bg-gray-50 border border-gray-200/80 rounded-xl px-3.5 py-1.5 text-xs">
+                  <div className="flex items-center gap-2 text-gray-500">
+                    <Reply className="w-3.5 h-3.5 text-[#EA384C]" />
+                    Replying to <span className="font-bold text-[#111827]">@{replyingTo.user.username}</span>
                   </div>
-                  <button onClick={() => setReplyingTo(null)} className="text-muted-foreground hover:text-foreground cursor-pointer">
-                    <X className="w-4 h-4" />
+                  <button onClick={() => setReplyingTo(null)} className="text-gray-400 hover:text-[#111827] cursor-pointer">
+                    <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
               )}
               <form onSubmit={handleSendMessage} className="relative flex items-center">
-                 <Input 
+                 <input 
                    type="text" 
                    value={messageInput}
                    onChange={e => setMessageInput(e.target.value)}
                    placeholder={`Message #${channelObj?.name}`}
-                   className="w-full bg-muted border border-border rounded-xl py-6 pl-4 pr-12 text-sm text-foreground focus-visible:ring-primary h-[45px]"
+                   className="w-full bg-gray-50 border border-gray-200/80 rounded-full py-2.5 pl-4 pr-12 text-xs sm:text-sm text-[#111827] focus:outline-none focus:border-[#EA384C] focus:bg-white focus:ring-2 focus:ring-[#EA384C]/15 transition-all"
                  />
-                 <Button 
+                 <button 
                    type="submit" 
                    disabled={!messageInput.trim()}
-                   className="absolute right-2 p-1.5 bg-primary hover:bg-primary/90 disabled:opacity-50 text-primary-foreground rounded-lg transition-colors cursor-pointer border-none h-[30px]"
+                   className="absolute right-1.5 p-2 bg-[#EA384C] hover:bg-[#D3283C] disabled:opacity-40 text-white rounded-full transition-all cursor-pointer shadow-sm"
                  >
-                   <Send className="w-4 h-4 text-primary-foreground" />
-                 </Button>
+                   <Send className="w-3.5 h-3.5" />
+                 </button>
               </form>
            </div>
         </div>

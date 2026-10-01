@@ -7,10 +7,10 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 const RepoPageContent = dynamic(() => import('./RepoPageContent'), {
   ssr: false,
   loading: () => (
-    <div className="min-h-screen flex items-center justify-center text-white bg-zinc-950 font-sans">
+    <div className="min-h-screen flex items-center justify-center text-[#111827] bg-[#FAFAFA] font-sans">
       <div className="flex flex-col items-center gap-3">
-        <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-        <span className="text-sm text-zinc-400">Loading Repository Studio...</span>
+        <div className="w-10 h-10 border-4 border-[#EA384C] border-t-transparent rounded-full animate-spin"></div>
+        <span className="text-sm text-gray-500 font-bold">Loading Repository Studio...</span>
       </div>
     </div>
   )

@@ -4,12 +4,10 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useSocket } from '@/contexts/SocketContext';
 import Navbar from '@/components/Navbar';
-import { MessageSquare, Heart, Share2, Award, Zap, Code, Send } from 'lucide-react';
+import { MessageSquare, Heart, Send, Award, Zap, Code, Sparkles, MessageCircle } from 'lucide-react';
 import { API_BASE_URL } from '@/config';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import EmptyState from '@/components/ui/EmptyState';
 
 function SocialFeed() {
   const { user, token } = useAuth();
@@ -19,6 +17,7 @@ function SocialFeed() {
   const [postType, setPostType] = useState('update');
   const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (token) {
@@ -27,16 +26,19 @@ function SocialFeed() {
   }, [token]);
 
   const fetchPosts = async () => {
+    setLoading(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/posts`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
         const data = await res.json();
-        setPosts(data);
+        setPosts(data || []);
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -97,160 +99,215 @@ function SocialFeed() {
     }
   };
 
-  const getPostIcon = (type: string) => {
+  const getPostBadge = (type: string) => {
     switch(type) {
-      case 'achievement': return <Award className="w-5 h-5 text-yellow-500" />;
-      case 'release': return <Zap className="w-5 h-5 text-purple-500" />;
-      case 'blog': return <Code className="w-5 h-5 text-primary" />;
-      default: return null;
+      case 'achievement':
+        return (
+          <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-amber-50 text-[#B45309] border border-amber-200/60 inline-flex items-center gap-1">
+            <Award className="w-3 h-3 text-[#FFB800]" /> Milestone
+          </span>
+        );
+      case 'release':
+        return (
+          <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200/60 inline-flex items-center gap-1">
+            <Zap className="w-3 h-3 text-blue-500" /> Release
+          </span>
+        );
+      case 'blog':
+        return (
+          <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-red-50 text-[#EA384C] border border-red-200/60 inline-flex items-center gap-1">
+            <Code className="w-3 h-3 text-[#EA384C]" /> Note
+          </span>
+        );
+      default:
+        return (
+          <span className="text-[10px] font-bold px-3 py-1 rounded-full bg-gray-100 text-gray-700 border border-gray-200/50 inline-flex items-center gap-1">
+            <Sparkles className="w-3 h-3 text-amber-500" /> Update
+          </span>
+        );
     }
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans">
+    <div className="min-h-screen bg-[#FAFAFA] text-[#111827] font-sans flex flex-col">
       <Navbar />
       
-      <main className="max-w-3xl mx-auto px-4 py-8">
+      <main className="max-w-2xl w-full mx-auto px-4 py-8 md:py-12 flex-1">
         
-        {/* Create Post */}
-        <Card className="bg-card border border-border rounded-2xl p-4 md:p-6 mb-8 shadow-xl relative overflow-hidden">
-           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[80px] rounded-full pointer-events-none"></div>
-           <form onSubmit={handlePostSubmit} className="relative z-10">
-              <div className="flex gap-4">
-                 <div className="relative shrink-0">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-indigo-500 flex items-center justify-center text-primary-foreground font-bold">
-                       {user?.username?.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-card rounded-full z-10" />
-                 </div>
-                 <div className="flex-1 space-y-3">
-                    <textarea 
-                      value={newPost}
-                      onChange={(e) => setNewPost(e.target.value)}
-                      placeholder="Share an update, achievement, or release..."
-                      className="w-full bg-background/40 border border-border rounded-xl p-4 text-sm text-foreground focus:outline-none focus:border-primary min-h-[100px] resize-none"
-                    />
-                    <div className="flex items-center justify-between">
-                       <select 
-                         value={postType} 
-                         onChange={(e) => setPostType(e.target.value)}
-                         className="bg-muted border border-border text-foreground text-xs px-3 py-1.5 rounded-lg outline-none cursor-pointer"
-                       >
-                         <option value="update">Status Update</option>
-                         <option value="achievement">Achievement</option>
-                         <option value="release">Release / Launch</option>
-                         <option value="blog">Blog Post</option>
-                       </select>
-                       
-                       <Button 
-                         type="submit"
-                         disabled={!newPost.trim()}
-                         className="bg-primary hover:bg-primary/90 text-primary-foreground px-5 py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition-all active:scale-95 cursor-pointer border-none shadow-[0_0_10px_var(--shadow-color)]"
-                       >
-                          Post <Send className="w-4 h-4 text-primary-foreground" />
-                       </Button>
-                    </div>
-                 </div>
+        {/* Header */}
+        <div className="mb-8 text-center sm:text-left">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-50 text-[#EA384C] text-xs font-bold border border-red-100 mb-3">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Community Stream</span>
+          </div>
+          <h1 className="font-display font-extrabold text-3xl sm:text-4xl text-[#111827] tracking-tight">
+            Developer <span className="text-[#EA384C]">Feed</span>
+          </h1>
+          <p className="font-sans text-xs sm:text-sm text-gray-500 mt-1 font-normal">
+            Real-time updates, milestone achievements, and releases from the DevCollab community.
+          </p>
+        </div>
+
+        {/* Create Post Card */}
+        <div className="glass-card p-5 md:p-6 bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_16px_36px_rgba(0,0,0,0.04)] rounded-3xl mb-8">
+          <form onSubmit={handlePostSubmit}>
+            <div className="flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#FFB800] to-[#FFE072] flex items-center justify-center font-bold text-sm text-[#111827] shrink-0 border border-white shadow-sm">
+                {user?.username?.charAt(0).toUpperCase()}
               </div>
-           </form>
-        </Card>
-
-        {/* Feed */}
-        <div className="space-y-6">
-          {posts.map((post) => (
-             <Card key={post._id} className="bg-card border border-border text-foreground rounded-2xl p-4 md:p-6 shadow-lg hover:border-primary/40 transition-colors">
-                <div className="flex justify-between items-start mb-4">
-                   <div className="flex gap-3">
-                     <div className="relative shrink-0">
-                       <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-indigo-500 flex items-center justify-center text-primary-foreground font-bold">
-                          {post.user.username.charAt(0).toUpperCase()}
-                       </div>
-                       {(onlineUsers.includes(post.user._id) || onlineUsers.includes(post.user.id)) && (
-                         <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-card rounded-full z-10" />
-                       )}
-                     </div>
-                     <div>
-                       <div className="flex items-center gap-2">
-                         <h3 className="font-bold text-foreground">{post.user.username}</h3>
-                         <span className="bg-primary/20 text-primary text-[10px] font-bold px-2 py-0.5 rounded uppercase">Level {post.user.level || 1}</span>
-                       </div>
-                       <p className="text-xs text-muted-foreground">
-                         {new Date(post.createdAt).toLocaleDateString()} at {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                       </p>
-                     </div>
-                   </div>
-                   {getPostIcon(post.type)}
-                </div>
+              <div className="flex-1 space-y-3">
+                <textarea 
+                  value={newPost}
+                  onChange={(e) => setNewPost(e.target.value)}
+                  placeholder="What are you building or launching today?"
+                  className="w-full text-xs sm:text-sm p-3.5 bg-gray-50/80 border border-gray-200/70 rounded-2xl focus:outline-none focus:border-[#EA384C] focus:bg-white focus:ring-2 focus:ring-[#EA384C]/15 transition-all text-[#111827] min-h-[90px] resize-none"
+                />
                 
-                <div className="text-sm text-foreground whitespace-pre-wrap mb-6 leading-relaxed">
-                   {post.content}
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                  <select 
+                    value={postType} 
+                    onChange={(e) => setPostType(e.target.value)}
+                    className="text-xs py-2 px-3.5 bg-gray-50 border border-gray-200 rounded-full cursor-pointer font-bold text-gray-700 focus:outline-none focus:border-[#EA384C]"
+                  >
+                    <option value="update">Status Update</option>
+                    <option value="achievement">Milestone / Achievement</option>
+                    <option value="release">Release / Launch</option>
+                    <option value="blog">Technical Note</option>
+                  </select>
+                  
+                  <button 
+                    type="submit"
+                    disabled={!newPost.trim()}
+                    className="btn-pill-red px-6 py-2 text-xs font-bold disabled:opacity-40 cursor-pointer flex items-center gap-1.5 shadow-[0_6px_16px_rgba(234,56,76,0.3)]"
+                  >
+                    <span>Share Update</span>
+                    <Send className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-                
-                <div className="flex items-center gap-6 border-t border-border pt-4">
-                   <button 
-                     onClick={() => handleLike(post._id)}
-                     className={`flex items-center gap-1.5 text-xs font-semibold transition-colors active:scale-90 cursor-pointer ${post.likes.includes(user?.id) || post.likes.includes(user?._id) ? 'text-pink-500 font-bold' : 'text-muted-foreground hover:text-foreground active:text-foreground'}`}
-                   >
-                     <Heart className={`w-4 h-4 ${(post.likes.includes(user?.id) || post.likes.includes(user?._id)) ? 'fill-current text-pink-500' : 'text-muted-foreground'}`} /> {post.likes.length} Likes
-                   </button>
-                   <button 
-                     onClick={() => setExpandedPostId(expandedPostId === post._id ? null : post._id)}
-                     className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground active:text-foreground active:scale-90 transition-colors cursor-pointer"
-                   >
-                     <MessageSquare className="w-4 h-4" /> {post.comments?.length || 0} Comments
-                   </button>
-                   <button className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground active:text-foreground active:scale-90 transition-colors ml-auto cursor-pointer">
-                     <Share2 className="w-4 h-4" /> Share
-                   </button>
-                </div>
-
-                {/* Comments Section */}
-                {expandedPostId === post._id && (
-                  <div className="mt-4 pt-4 border-t border-border">
-                    <div className="space-y-4 mb-4 max-h-[300px] overflow-y-auto no-scrollbar">
-                      {post.comments?.map((comment: any, idx: number) => (
-                        <div key={idx} className="flex gap-3">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-indigo-500 flex items-center justify-center text-primary-foreground text-xs font-bold shrink-0">
-                            {comment.user.username.charAt(0).toUpperCase()}
-                          </div>
-                          <div className="flex-1 bg-muted rounded-xl rounded-tl-none p-3 border border-border">
-                            <div className="flex justify-between items-center mb-1">
-                              <span className="font-bold text-foreground text-xs">{comment.user.username}</span>
-                              <span className="text-[10px] text-muted-foreground">{new Date(comment.createdAt).toLocaleDateString()}</span>
-                            </div>
-                            <p className="text-sm text-foreground">{comment.content}</p>
-                          </div>
-                        </div>
-                      ))}
-                      {(!post.comments || post.comments.length === 0) && (
-                        <p className="text-xs text-muted-foreground text-center italic">No comments yet. Be the first to comment!</p>
-                      )}
-                    </div>
-                    
-                    <form onSubmit={(e) => handleCommentSubmit(post._id, e)} className="flex gap-2">
-                      <Input 
-                        type="text" 
-                        value={commentText}
-                        onChange={(e) => setCommentText(e.target.value)}
-                        placeholder="Write a comment..." 
-                        className="flex-1 bg-background/40 border border-border rounded-xl px-4 py-2 text-sm text-foreground focus-visible:ring-primary h-[38px]"
-                      />
-                      <Button 
-                        type="submit"
-                        disabled={!commentText.trim()}
-                        className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center transition-all active:scale-95 cursor-pointer border-none h-[38px] shadow-[0_0_10px_var(--shadow-color)]"
-                      >
-                        <Send className="w-4 h-4 text-primary-foreground" />
-                      </Button>
-                    </form>
-                  </div>
-                )}
-             </Card>
-          ))}
-          {posts.length === 0 && (
-            <div className="text-center py-12 text-muted-foreground">
-              No posts yet. Be the first to share an update!
+              </div>
             </div>
+          </form>
+        </div>
+
+        {/* Posts Stream */}
+        <div className="space-y-6">
+          {loading ? (
+            <div className="space-y-4">
+              {[1, 2].map((i) => (
+                <div key={i} className="glass-card p-6 h-40 animate-pulse bg-white/60 rounded-3xl" />
+              ))}
+            </div>
+          ) : posts.length === 0 ? (
+            <EmptyState
+              icon={<MessageCircle className="w-8 h-8 text-[#EA384C]" />}
+              title="No posts yet"
+              description="No updates have been shared yet. Be the first developer to share what you are building!"
+            />
+          ) : (
+            posts.map((post) => {
+              const hasLiked = post.likes?.includes(user?.id) || post.likes?.includes(user?._id);
+              const isAuthorOnline = onlineUsers?.includes(post.user?._id) || onlineUsers?.includes(post.user?.id);
+
+              return (
+                <div key={post._id} className="glass-card p-5 md:p-6 bg-white/85 backdrop-blur-xl border border-white/90 shadow-[0_12px_32px_rgba(0,0,0,0.04)] rounded-3xl">
+                  {/* Author Row */}
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="relative shrink-0">
+                        <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-400 to-indigo-400 text-white flex items-center justify-center text-sm font-bold overflow-hidden border border-white shadow-sm">
+                          {post.user?.avatar ? (
+                            <img src={post.user.avatar} alt={post.user.username} className="w-full h-full object-cover" />
+                          ) : (
+                            post.user?.username?.charAt(0).toUpperCase()
+                          )}
+                        </div>
+                        {isAuthorOnline && (
+                          <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#10B981] border-2 border-white rounded-full" />
+                        )}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-display font-extrabold text-base text-[#111827]">{post.user?.username}</h3>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200/60">
+                            Lvl {post.user?.level || 1}
+                          </span>
+                        </div>
+                        <p className="text-[11px] font-medium text-gray-400">
+                          {new Date(post.createdAt).toLocaleDateString()} at {new Date(post.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        </p>
+                      </div>
+                    </div>
+
+                    {getPostBadge(post.type)}
+                  </div>
+                  
+                  {/* Content */}
+                  <p className="font-sans text-xs sm:text-sm text-[#111827] whitespace-pre-wrap mb-5 leading-relaxed font-normal">
+                    {post.content}
+                  </p>
+                  
+                  {/* Interactions: Like & Comments */}
+                  <div className="flex items-center gap-6 border-t border-gray-100 pt-4 text-xs font-bold">
+                    <button 
+                      onClick={() => handleLike(post._id)}
+                      className={`inline-flex items-center gap-1.5 transition-colors cursor-pointer ${
+                        hasLiked ? 'text-[#EA384C]' : 'text-gray-500 hover:text-[#EA384C]'
+                      }`}
+                    >
+                      <Heart className={`w-4 h-4 ${hasLiked ? 'fill-[#EA384C]' : ''}`} />
+                      <span>{post.likes?.length || 0} Likes</span>
+                    </button>
+
+                    <button 
+                      onClick={() => setExpandedPostId(expandedPostId === post._id ? null : post._id)}
+                      className="inline-flex items-center gap-1.5 text-gray-500 hover:text-[#111827] transition-colors cursor-pointer"
+                    >
+                      <MessageSquare className="w-4 h-4" />
+                      <span>{post.comments?.length || 0} Comments</span>
+                    </button>
+                  </div>
+
+                  {/* Comments Thread */}
+                  {expandedPostId === post._id && (
+                    <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
+                      {post.comments && post.comments.length > 0 ? (
+                        post.comments.map((comment: any, cIdx: number) => (
+                          <div key={cIdx} className="p-3 rounded-2xl bg-gray-50 border border-gray-100 text-xs">
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="font-bold text-[#111827]">{comment.user?.username || 'Dev'}</span>
+                              <span className="text-[10px] text-gray-400">
+                                {new Date(comment.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                              </span>
+                            </div>
+                            <p className="text-gray-600">{comment.content}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-xs text-gray-400 italic">No replies yet. Start the thread!</p>
+                      )}
+
+                      {/* Comment Input */}
+                      <form onSubmit={(e) => handleCommentSubmit(post._id, e)} className="flex gap-2 pt-1">
+                        <input
+                          type="text"
+                          placeholder="Write a comment..."
+                          value={commentText}
+                          onChange={(e) => setCommentText(e.target.value)}
+                          className="flex-1 text-xs py-2 px-3.5 bg-gray-50 border border-gray-200/80 rounded-full focus:outline-none focus:border-[#EA384C] text-[#111827]"
+                        />
+                        <button
+                          type="submit"
+                          disabled={!commentText.trim()}
+                          className="btn-pill-red px-4 py-1.5 text-xs font-bold disabled:opacity-40"
+                        >
+                          Reply
+                        </button>
+                      </form>
+                    </div>
+                  )}
+                </div>
+              );
+            })
           )}
         </div>
       </main>
@@ -258,7 +315,7 @@ function SocialFeed() {
   );
 }
 
-export default function SocialFeedPage() {
+export default function FeedPage() {
   return (
     <ProtectedRoute>
       <SocialFeed />
