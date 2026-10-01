@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, Suspense } from 'react';
+import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, ArrowRight, Code2, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Lock, ArrowLeft, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { API_BASE_URL } from '@/config';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -64,112 +65,112 @@ function ResetPasswordContent() {
   };
 
   return (
-    <Card className="relative bg-zinc-950/60 backdrop-blur-2xl border-white/10 rounded-3xl overflow-hidden group shadow-2xl p-2">
-      {/* Subtle animated border glow */}
-      <motion.div 
-        animate={{ opacity: [0.3, 0.7, 0.3] }}
-        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-        className="absolute -inset-0.5 bg-gradient-to-br from-indigo-500/40 to-emerald-500/40 rounded-3xl -z-10 blur-xl transition-opacity duration-500" 
-      />
+    <Card className="relative bg-[#121316] border-zinc-800 rounded-[24px] overflow-hidden group shadow-[0_25px_60px_rgba(0,0,0,0.6)] p-2">
+      {/* Subtle top burgundy accent strip */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#B7194B] to-transparent" />
       
-      <CardHeader className="text-center pt-8 pb-6">
-        <div className="flex justify-center mb-6 relative">
-           <motion.div 
-              animate={{ y: [0, -8, 0] }}
-              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-              className="relative"
-           >
-              <div className="absolute inset-0 bg-indigo-500/40 blur-xl rounded-full" />
-              <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-4 rounded-2xl border border-white/20 shadow-xl relative z-10">
-                 <Code2 className="text-white w-8 h-8" />
-              </div>
-              <Sparkles className="absolute -top-2 -right-4 w-5 h-5 text-emerald-400 animate-pulse" />
-           </motion.div>
+      <CardHeader className="text-center pt-8 pb-4">
+        <div className="flex justify-center mb-4 relative">
+          <div className="w-12 h-12 rounded-2xl bg-[#B7194B] flex items-center justify-center shadow-[0_10px_25px_rgba(183,25,75,0.4)]">
+            <Lock className="text-white w-6 h-6" />
+          </div>
         </div>
 
-        <CardTitle className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400 tracking-tight">
+        <CardTitle className="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-tight uppercase">
           {success ? 'Success!' : 'New Password'}
         </CardTitle>
-        <CardDescription className="text-zinc-400 text-sm font-medium mt-2">
+        <CardDescription className="text-zinc-400 text-xs font-normal mt-1 leading-relaxed">
           {success 
             ? 'Your password has been reset successfully.' 
-            : 'Enter your new password below.'}
+            : 'Enter your new credentials below to restore workspace access.'}
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4 px-6 pb-6">
         <AnimatePresence mode="wait">
           {error && (
             <motion.div 
               initial={{ opacity: 0, height: 0 }} 
               animate={{ opacity: 1, height: 'auto' }} 
               exit={{ opacity: 0, height: 0 }}
-              className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl text-sm flex items-center gap-2"
+              className="bg-rose-500/10 border border-rose-500/30 text-rose-300 px-4 py-2.5 rounded-xl text-xs flex items-center gap-2"
               key="error-alert"
             >
-              <div className="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping" />
-              {error}
+              <div className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" />
+              <span>{error}</span>
             </motion.div>
           )}
         </AnimatePresence>
 
         {success ? (
-          <div className="space-y-6 text-center">
+          <div className="space-y-4 text-center py-2">
             <div className="flex justify-center">
-              <CheckCircle2 className="w-16 h-16 text-emerald-400 animate-bounce" />
+              <CheckCircle2 className="w-12 h-12 text-emerald-400 animate-bounce" />
             </div>
-            <Button 
+            <button 
+              type="button"
               onClick={() => router.push('/auth')}
-              className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-semibold py-6 rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full bg-[#B7194B] hover:bg-[#c92055] text-white font-bold text-xs uppercase tracking-wider py-3 rounded-full transition-all shadow-[0_10px_25px_rgba(183,25,75,0.35)] hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Go to Sign In</span>
               <ArrowRight className="w-4 h-4" />
-            </Button>
+            </button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="relative group">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 group-focus-within:text-indigo-400 transition-colors z-10" />
-              <Input 
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                className="w-full bg-black/40 border border-white/10 rounded-xl py-6 pl-12 pr-4 text-white placeholder-zinc-500 focus-visible:ring-indigo-500"
-                placeholder="New password"
-                required
-              />
+              <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5 text-left">
+                New Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <input 
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  className="w-full text-xs font-mono py-2.5 pl-10 pr-3.5 bg-zinc-950/80 border border-zinc-800 rounded-xl focus:outline-none focus:border-[#B7194B] focus:ring-2 focus:ring-[#B7194B]/20 transition-all text-white placeholder:text-zinc-600"
+                  placeholder="••••••••••••"
+                  required
+                />
+              </div>
             </div>
 
             <div className="relative group">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500 group-focus-within:text-indigo-400 transition-colors z-10" />
-              <Input 
-                type="password"
-                value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
-                className="w-full bg-black/40 border border-white/10 rounded-xl py-6 pl-12 pr-4 text-white placeholder-zinc-500 focus-visible:ring-indigo-500"
-                placeholder="Confirm new password"
-                required
-              />
+              <label className="block text-[11px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5 text-left">
+                Confirm Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <input 
+                  type="password"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  className="w-full text-xs font-mono py-2.5 pl-10 pr-3.5 bg-zinc-950/80 border border-zinc-800 rounded-xl focus:outline-none focus:border-[#B7194B] focus:ring-2 focus:ring-[#B7194B]/20 transition-all text-white placeholder:text-zinc-600"
+                  placeholder="••••••••••••"
+                  required
+                />
+              </div>
             </div>
 
-            <Button 
+            <button 
               type="submit" 
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white font-bold py-6 rounded-xl transition-all shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full bg-[#B7194B] hover:bg-[#c92055] text-white font-bold text-xs uppercase tracking-wider py-3 rounded-full transition-all shadow-[0_10px_25px_rgba(183,25,75,0.35)] hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-4"
             >
               <span>
                 {isLoading ? 'Resetting Password...' : 'Reset Password'}
               </span>
               {!isLoading && <ArrowRight className="w-4 h-4" />}
-            </Button>
+            </button>
           </form>
         )}
 
         {!success && (
           <div className="text-center pt-2">
             <button 
+              type="button"
               onClick={() => router.push('/auth')}
-              className="text-indigo-400 hover:text-indigo-300 active:text-indigo-200 font-bold transition-colors text-sm cursor-pointer"
+              className="text-zinc-400 hover:text-[#ff7597] font-semibold transition-colors text-xs cursor-pointer underline"
             >
               Back to Sign In
             </button>
@@ -181,22 +182,49 @@ function ResetPasswordContent() {
 }
 
 export default function ResetPasswordPage() {
+  const router = useRouter();
+
   return (
-    <div className="min-h-screen relative flex items-center justify-center overflow-hidden bg-[#09090b]">
-      {/* Decorative Orbs */}
-      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-indigo-600/30 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-emerald-600/20 rounded-full blur-[120px] pointer-events-none" />
+    <div className="min-h-screen relative flex flex-col items-center justify-center overflow-hidden bg-[#090909] text-white p-4 font-sans select-none">
+      
+      {/* Floating Back Button */}
+      <button
+        type="button"
+        onClick={() => router.push('/auth')}
+        aria-label="Back"
+        className="fixed top-5 left-5 z-50 w-[54px] h-[54px] sm:w-[60px] sm:h-[60px] rounded-full bg-white flex items-center justify-center shadow-[0_8px_24px_rgba(0,0,0,0.35)] cursor-pointer text-black transition-transform duration-200 ease-out hover:scale-105 active:scale-95 border-0 focus:outline-none"
+      >
+        <ArrowLeft className="w-6 h-6 stroke-[2.4] text-black" />
+      </button>
+
+      {/* Atmospheric rich burgundy ambient backlight */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[350px] bg-[#B7194B]/15 rounded-full blur-[140px] pointer-events-none -z-10" />
+
+      {/* Brand Header */}
+      <Link href="/" className="flex items-center gap-3 mb-6 group select-none">
+        <div className="w-11 h-11 rounded-2xl bg-[#B7194B] flex items-center justify-center shadow-[0_10px_25px_rgba(183,25,75,0.4)] group-hover:scale-105 transition-transform">
+          <span className="font-display font-black text-base text-white">DC</span>
+        </div>
+        <div className="flex flex-col text-left">
+          <span className="font-display font-extrabold text-xl text-white tracking-tight leading-none">
+            DEV <span className="text-[#B7194B]">COLLAB</span>
+          </span>
+          <span className="text-[9px] font-mono text-zinc-500 tracking-widest uppercase mt-1">
+            Account Security
+          </span>
+        </div>
+      </Link>
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.98, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full max-w-[420px] z-10 p-4"
+        transition={{ duration: 0.35, ease: "easeOut" }}
+        className="w-full max-w-[420px] z-10"
       >
         <Suspense fallback={
-          <Card className="bg-zinc-950/60 backdrop-blur-2xl border-white/10 rounded-3xl p-8 text-center shadow-2xl">
-            <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <span className="text-sm text-zinc-400">Loading reset session...</span>
+          <Card className="bg-[#121316] border-zinc-800 rounded-3xl p-8 text-center shadow-2xl">
+            <div className="w-8 h-8 border-3 border-[#B7194B] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <span className="text-xs text-zinc-400 font-mono">Loading reset session...</span>
           </Card>
         }>
           <ResetPasswordContent />
